@@ -1,7 +1,9 @@
 import express from 'express'
+import config from 'config'
 
+const port = config.get<number>('dev.port')
 const app = express()
 
-app.listen(4000, () => {
-    console.log("test3")
+app.listen(port, () => {
+    console.log(`Listening on localhost:${port}`);
 })
