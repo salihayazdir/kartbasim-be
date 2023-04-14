@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express"
 import { AnyZodObject } from "zod"
+import logger from "../utils/logger"
 
 const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -8,8 +9,9 @@ const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: N
             query: req.query,
             params: req.params
         })
-    } catch(e: any) {
-        return res.status(400).send(e.errors)
+    } catch(err: any) {
+        logger.error(err)
+        return res.status(400).send(err.errors)
     }
 }
 
