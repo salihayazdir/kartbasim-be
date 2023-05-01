@@ -51,7 +51,11 @@ export async function addBankController(req: Request<AddBankInput['body']>, res:
 		return res.send(responseObject);
 	} catch (err: any) {
 		logger.error(err);
-		return res.status(400).send(err.message);
+		const responseObject = {
+			success: false,
+			error: err,
+		};
+		return res.status(400).send(responseObject);
 	}
 }
 

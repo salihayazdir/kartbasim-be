@@ -15,7 +15,7 @@ export async function getBanksProc(): Promise<IProcedureResult<Bank>> {
 		return result;
 	} catch (err: any) {
 		logger.error(err);
-		throw err;
+		throw new MSSQLError(err);
 	}
 }
 
@@ -30,7 +30,7 @@ export async function getBankProc(bankId: number): Promise<IProcedureResult<Bank
 		return result;
 	} catch (err: any) {
 		logger.error(err);
-		throw err;
+		throw new MSSQLError(err);
 	}
 }
 
@@ -45,7 +45,7 @@ export async function addBankProc(bankName: string): Promise<IProcedureResult<Ba
 		return result;
 	} catch (err: any) {
 		logger.error(err);
-		throw err;
+		throw new MSSQLError(err);
 	}
 }
 
@@ -65,7 +65,7 @@ export async function editBankProc(bankProps: Bank): Promise<IProcedureResult<Ba
 		return result;
 	} catch (err: any) {
 		logger.error(err);
-		throw err;
+		throw new MSSQLError(err);
 	}
 }
 
@@ -80,6 +80,6 @@ export async function deleteBankProc(bankId: number): Promise<IProcedureResult<B
 		return result;
 	} catch (err: any) {
 		logger.error(err);
-		throw err;
+		throw new MSSQLError(err);
 	}
 }

@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import logger from '../utils/logger';
 import { Bank } from '../database/models';
 import {
