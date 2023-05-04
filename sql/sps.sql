@@ -1,0 +1,82 @@
+DROP PROCEDURE IF EXISTS [dbo].[BANKS_GET_BANK]
+DROP PROCEDURE IF EXISTS [dbo].[BANKS_GET_BANKS]
+DROP PROCEDURE IF EXISTS [dbo].[BANKS_ADD_BANK]
+DROP PROCEDURE IF EXISTS [dbo].[BANKS_EDIT_BANK]
+DROP PROCEDURE IF EXISTS [dbo].[BANKS_DELETE_BANK]
+
+GO
+CREATE PROCEDURE [dbo].[BANKS_GET_BANK]
+	@bank_id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT *
+		FROM [dbo].[BANKS]
+		WHERE [ID] = @bank_id
+	END;
+GO
+
+CREATE PROCEDURE [dbo].[BANKS_GET_BANKS]
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT *
+		FROM [dbo].[BANKS]
+	END;
+GO
+
+CREATE PROCEDURE [dbo].[BANKS_ADD_BANK]
+	@bank_name NVARCHAR(255),
+	@created_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		INSERT INTO [dbo].[banks]
+		(
+			[NAME],
+			[IS_ACTIVE],
+			[IS_DELETED],
+			[CREATED_BY],
+			[CREATED_AT]
+		)
+		VALUES
+		(
+			@bank_name,
+			1,
+			0,
+			@created_by,
+			GETDATE()
+		)
+		SELECT SCOPE_IDENTITY()
+	END;
+GO
+
+CREATE PROCEDURE [dbo].[BANKS_EDIT_BANK]
+	@bank_name NVARCHAR(255),
+	@bank_id INT,
+	@is_active BIT,
+	@edited_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		UPDATE [dbo].[BANKS]
+		SET 
+			[NAME] = @bank_name,
+			[IS_ACTIVE] = @is_active,
+			[EDITED_BY] = @edited_by,
+			[EDITED_AT] = GETDATE()
+		WHERE [ID] = @bank_id
+	END;
+GO
+
+CREATE PROCEDURE [dbo].[BANKS_DELETE_BANK]
+	@bank_id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		UPDATE [dbo].[BANKS]
+		SET 
+			[IS_DELETED] = 1
+		WHERE [ID] = @bank_id
+	END;
+GO
