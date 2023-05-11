@@ -6,16 +6,23 @@ import {
 	getBanksService,
 	editBankService,
 	deleteBankService,
-} from '../service/bank.service';
-import { GetBanksInput, GetBankInput, AddBankInput, EditBankInput } from '../schema/bank.schema';
-import { Bank } from '../database/models';
+} from '../services/banks.service';
+import {
+	GetBanksInput,
+	GetBankInput,
+	AddBankInput,
+	EditBankInput,
+	DeleteBankInput,
+} from '../schemas/banks.schema';
+import { Bank, ResponseObject } from '../data/models';
+import { IRecordSet } from 'mssql';
 
 export async function getBanksController(req: Request<GetBanksInput['body']>, res: Response) {
 	try {
 		const banksRecordset = await getBanksService();
-		const responseObject = {
-			success: true,
-			recordset: banksRecordset,
+		const responseObject: ResponseObject<Bank[]> = {
+			error: false,
+			data: banksRecordset,
 		};
 		return res.send(responseObject);
 	} catch (err: any) {
@@ -29,14 +36,18 @@ export async function getBankController(req: Request<GetBankInput['params']>, re
 		const bankIdFromRequest: string = req.params.bankId;
 		const bankIdNumberFromRequest: number = parseInt(bankIdFromRequest);
 		const serviceResult = await getBankService(bankIdNumberFromRequest);
-		const responseObject = {
-			success: true,
-			recordset: serviceResult,
+		const responseObject: ResponseObject<Bank[]> = {
+			error: false,
+			data: serviceResult,
 		};
 		return res.send(responseObject);
 	} catch (err: any) {
 		logger.error(err);
-		return res.status(400).send(err.message);
+		const responseObject: ResponseObject<null> = {
+			error: err,
+			data: null,
+		};
+		return res.status(400).send(responseObject);
 	}
 }
 
@@ -44,16 +55,18 @@ export async function addBankController(req: Request<AddBankInput['body']>, res:
 	try {
 		const { bankName } = req.body;
 		const serviceResult = await addBankService(bankName);
-		const responseObject = {
-			success: true,
-			recordset: serviceResult,
+		const responseObject: ResponseObject<{ insertedBankId: number }> = {
+			error: false,
+			data: {
+				insertedBankId: serviceResult,
+			},
 		};
 		return res.send(responseObject);
 	} catch (err: any) {
 		logger.error(err);
-		const responseObject = {
-			success: false,
+		const responseObject: ResponseObject<null> = {
 			error: err,
+			data: null,
 		};
 		return res.status(400).send(responseObject);
 	}
@@ -69,37 +82,51 @@ export async function editBankController(
 		const numberBankId = parseInt(bankId);
 
 		const bankToEdit: Bank = {
-			bank_id: numberBankId,
-			bank_name: bankName,
+			id: numberBankId,
+			name: bankName,
 			is_active: isActive,
+			is_deleted: false,
 		};
 
 		const serviceResult = await editBankService(bankToEdit);
 
-		const responseObject = {
-			success: true,
-			recordset: serviceResult,
+		const responseObject: ResponseObject<{ editedBankId: number }> = {
+			error: false,
+			data: {
+				editedBankId: serviceResult,
+			},
 		};
 
 		return res.send(responseObject);
 	} catch (err: any) {
 		logger.error(err);
-		return res.status(400).send(err.message);
+		const responseObject: ResponseObject<null> = {
+			error: err,
+			data: null,
+		};
+		return res.status(400).send(responseObject);
 	}
 }
 
-export async function deleteBankController(req: Request<GetBankInput['params']>, res: Response) {
+export async function deleteBankController(req: Request<DeleteBankInput['params']>, res: Response) {
 	try {
 		const bankIdFromRequest: string = req.params.bankId;
 		const bankIdNumberFromRequest: number = parseInt(bankIdFromRequest);
+
 		const serviceResult = await deleteBankService(bankIdNumberFromRequest);
-		const responseObject = {
-			success: true,
-			recordset: serviceResult,
+		const responseObject: ResponseObject<{ deletedBankId: number }> = {
+			error: false,
+			data: {
+				deletedBankId: serviceResult,
+			},
 		};
 		return res.send(responseObject);
 	} catch (err: any) {
 		logger.error(err);
-		return res.status(400).send(err.message);
+		const responseObject: ResponseObject<null> = {
+			error: err,
+			data: null,
+		};
+		return res.status(400).send(responseObject);
 	}
 }
