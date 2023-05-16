@@ -1,21 +1,21 @@
 import logger from '../utils/logger';
+import { Printer, ErrorDetails } from '../data/models';
+import utcOffset from '../utils/utcOffset';
 import config from 'config';
 import sql, { IProcedureResult, ConnectionPool } from 'mssql';
-import { Bank, ErrorDetails } from '../data/models';
-import utcOffset from '../utils/utcOffset';
 
 const dbConfig = config.get<string>('dev.db');
 
-export async function getBanksService() {
+export async function getPrintersService() {
 	try {
 		const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
-		const result: IProcedureResult<Bank> = await (await pool)
+		const result: IProcedureResult<Printer> = await (await pool)
 			.request()
-			.execute('dbo.BANKS_GET_BANKS');
+			.execute('dbo.PRINTERS_GET_PRINTERS');
 		logger.info(result);
 
 		const { recordset } = result;
-		const recordsetDatesAdjusted: Bank[] = recordset.map((record) => ({
+		const recordsetDatesAdjusted: Printer[] = recordset.map((record) => ({
 			...record,
 			created_at: record.created_at ? utcOffset(record.created_at) : record.created_at,
 			edited_at: record.edited_at ? utcOffset(record.edited_at) : record.edited_at,
@@ -31,24 +31,25 @@ export async function getBanksService() {
 	}
 }
 
-export async function getBankService(id: number) {
+export async function getPrinterService(id: number) {
 	try {
 		const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
-		const result: IProcedureResult<Bank> = await (await pool)
+		const result: IProcedureResult<Printer> = await (await pool)
 			.request()
 			.input('id', sql.Int, id)
-			.execute('dbo.BANKS_GET_BANK');
+			.execute('dbo.PRINTERS_GET_PRINTER');
 		logger.info(result);
 
 		const { recordset } = result;
 		if (recordset.length !== 1) {
 			const errorDetails: ErrorDetails = {
 				code: 'NOT_FOUND',
-				message: 'Banka bulunamadı.',
+				message: 'Printer bulunamadı.',
 			};
 			throw errorDetails;
 		}
-		const recordsetDatesAdjusted: Bank[] = recordset.map((record) => ({
+
+		const recordsetDatesAdjusted: Printer[] = recordset.map((record) => ({
 			...record,
 			created_at: record.created_at ? utcOffset(record.created_at) : record.created_at,
 			edited_at: record.edited_at ? utcOffset(record.edited_at) : record.edited_at,
@@ -65,23 +66,29 @@ export async function getBankService(id: number) {
 	}
 }
 
-export async function addBankService(name: string): Promise<number> {
+export async function addPrinterService(
+	printer: Omit<Printer, 'id' | 'is_deleted'>
+): Promise<number> {
 	try {
+		const { name, serial_no, model, description } = printer;
+
 		const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
-		const result: IProcedureResult<Bank> = await (await pool)
+		const result: IProcedureResult<Printer> = await (await pool)
 			.request()
 			.input('name', sql.NVarChar, name)
-			.execute('dbo.BANKS_ADD_BANK');
+			.input('serial_no', sql.NVarChar, serial_no)
+			.input('model', sql.NVarChar, model)
+			.input('description', sql.NVarChar, description)
+			.execute('dbo.PRINTERS_ADD_PRINTER');
 		logger.info(result);
-		const { returnValue } = result;
 
-		return returnValue;
+		return result.returnValue;
 	} catch (err: any) {
 		logger.error(err);
 		if (err.message.indexOf('unique index') !== -1) {
 			const errorDetails: ErrorDetails = {
 				code: 'UNIQUE_INDEX',
-				message: 'Banka ismi benzersiz olmalıdır.',
+				message: 'Printer seri numarası ve ismi benzersiz olmalıdır.',
 			};
 			throw errorDetails;
 		}
@@ -89,21 +96,25 @@ export async function addBankService(name: string): Promise<number> {
 			code: 'DB_CONNECTION',
 			message: 'Veritabanı bağlantı hatası.',
 		};
+
 		throw errorDetails;
 	}
 }
 
-export async function editBankService(bankProps: Bank) {
+export async function editPrinterService(printer: Printer) {
 	try {
-		const { id, name, is_active } = bankProps;
+		const { id, name, serial_no, model, description, is_active } = printer;
 
 		const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
-		const result: IProcedureResult<Bank> = await (await pool)
+		const result: IProcedureResult<Printer> = await (await pool)
 			.request()
 			.input('id', sql.Int, id)
 			.input('name', sql.NVarChar, name)
 			.input('is_active', sql.Bit, is_active)
-			.execute('dbo.BANKS_EDIT_BANK');
+			.input('serial_no', sql.NVarChar, serial_no)
+			.input('model', sql.NVarChar, model)
+			.input('description', sql.NVarChar, description)
+			.execute('dbo.PRINTERS_EDIT_PRINTER');
 
 		logger.info(result);
 
@@ -111,13 +122,20 @@ export async function editBankService(bankProps: Bank) {
 		if (returnValue === -1) {
 			const errorDetails: ErrorDetails = {
 				code: 'NOT_FOUND',
-				message: 'Banka bulunamadı.',
+				message: 'Printer bulunamadı.',
 			};
 			throw errorDetails;
 		}
 
 		return returnValue;
 	} catch (err: any) {
+		if (err.message.indexOf('unique index') !== -1) {
+			const errorDetails: ErrorDetails = {
+				code: 'UNIQUE_INDEX',
+				message: 'Printer seri numarası ve ismi benzersiz olmalıdır.',
+			};
+			throw errorDetails;
+		}
 		logger.error(err);
 		const errorDetails: ErrorDetails = {
 			code: 'DB_CONNECTION',
@@ -127,20 +145,20 @@ export async function editBankService(bankProps: Bank) {
 	}
 }
 
-export async function deleteBankService(id: number) {
+export async function deletePrinterService(id: number) {
 	try {
 		const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
-		const result: IProcedureResult<Bank> = await (await pool)
+		const result: IProcedureResult<Printer> = await (await pool)
 			.request()
 			.input('id', id)
-			.execute('dbo.BANKS_DELETE_BANK');
+			.execute('dbo.PRINTERS_DELETE_PRINTER');
 		logger.info(result);
 
 		const { returnValue } = result;
 		if (returnValue === -1) {
 			const errorDetails: ErrorDetails = {
 				code: 'NOT_FOUND',
-				message: 'Banka bulunamadı.',
+				message: 'Printer bulunamadı.',
 			};
 			throw errorDetails;
 		}

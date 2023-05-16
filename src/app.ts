@@ -3,6 +3,7 @@ import config from 'config';
 import logger from './utils/logger';
 import cors from 'cors';
 import banksRouter from './routes/banks.routes';
+import printersRouter from './routes/printers.routes';
 import errorHandler from './middlewares/errorHandler';
 import 'express-async-errors';
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/banks', banksRouter);
+app.use('/api/printers', printersRouter);
 app.use(errorHandler);
 
 app.listen(port, () => {
