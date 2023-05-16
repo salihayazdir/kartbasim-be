@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import logger from '../utils/logger';
 import {
 	addBankService,
@@ -15,7 +15,6 @@ import {
 	DeleteBankInput,
 } from '../schemas/banks.schema';
 import { Bank, ResponseObject } from '../data/models';
-import { IRecordSet } from 'mssql';
 
 export async function getBanksController(req: Request<GetBanksInput['body']>, res: Response) {
 	try {
@@ -33,9 +32,9 @@ export async function getBanksController(req: Request<GetBanksInput['body']>, re
 
 export async function getBankController(req: Request<GetBankInput['params']>, res: Response) {
 	try {
-		const bankIdFromRequest: string = req.params.bankId;
-		const bankIdNumberFromRequest: number = parseInt(bankIdFromRequest);
-		const serviceResult = await getBankService(bankIdNumberFromRequest);
+		const idFromRequest: string = req.params.id;
+		const idNumberFromRequest: number = parseInt(idFromRequest);
+		const serviceResult = await getBankService(idNumberFromRequest);
 		const responseObject: ResponseObject<Bank[]> = {
 			error: false,
 			data: serviceResult,
@@ -53,8 +52,8 @@ export async function getBankController(req: Request<GetBankInput['params']>, re
 
 export async function addBankController(req: Request<AddBankInput['body']>, res: Response) {
 	try {
-		const { bankName } = req.body;
-		const serviceResult = await addBankService(bankName);
+		const { name } = req.body;
+		const serviceResult = await addBankService(name);
 		const responseObject: ResponseObject<{ insertedBankId: number }> = {
 			error: false,
 			data: {
@@ -77,14 +76,14 @@ export async function editBankController(
 	res: Response
 ) {
 	try {
-		const { bankName, isActive } = req.body;
-		const { bankId } = req.params;
-		const numberBankId = parseInt(bankId);
+		const { name, is_active } = req.body;
+		const { id } = req.params;
+		const parsedId = parseInt(id);
 
 		const bankToEdit: Bank = {
-			id: numberBankId,
-			name: bankName,
-			is_active: isActive,
+			id: parsedId,
+			name,
+			is_active,
 			is_deleted: false,
 		};
 
@@ -110,14 +109,14 @@ export async function editBankController(
 
 export async function deleteBankController(req: Request<DeleteBankInput['params']>, res: Response) {
 	try {
-		const bankIdFromRequest: string = req.params.bankId;
-		const bankIdNumberFromRequest: number = parseInt(bankIdFromRequest);
+		const idFromRequest: string = req.params.id;
+		const idNumberFromRequest: number = parseInt(idFromRequest);
 
-		const serviceResult = await deleteBankService(bankIdNumberFromRequest);
-		const responseObject: ResponseObject<{ deletedBankId: number }> = {
+		const serviceResult = await deleteBankService(idNumberFromRequest);
+		const responseObject: ResponseObject<{ deletedId: number }> = {
 			error: false,
 			data: {
-				deletedBankId: serviceResult,
+				deletedId: serviceResult,
 			},
 		};
 		return res.send(responseObject);

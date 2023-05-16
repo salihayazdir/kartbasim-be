@@ -1,31 +1,24 @@
 DROP PROCEDURE IF EXISTS [dbo].[BANKS_GET_BANK]
-DROP PROCEDURE IF EXISTS [dbo].[BANKS_GET_BANK_BY_NAME]
 DROP PROCEDURE IF EXISTS [dbo].[BANKS_GET_BANKS]
 DROP PROCEDURE IF EXISTS [dbo].[BANKS_ADD_BANK]
 DROP PROCEDURE IF EXISTS [dbo].[BANKS_EDIT_BANK]
 DROP PROCEDURE IF EXISTS [dbo].[BANKS_DELETE_BANK]
 
-GO
-CREATE OR ALTER PROCEDURE [dbo].[BANKS_GET_BANK]
-	@bank_id INT
-	AS
-	BEGIN 
-     SET NOCOUNT ON;
-		SELECT *
-		FROM [dbo].[BANKS]
-		WHERE [id] = @bank_id AND [is_deleted] = 0
-	END;
-GO
+DROP PROCEDURE IF EXISTS [dbo].[PRINTERS_GET_PRINTER]
+DROP PROCEDURE IF EXISTS [dbo].[PRINTERS_GET_PRINTERS]
+DROP PROCEDURE IF EXISTS [dbo].[PRINTERS_ADD_PRINTER]
+DROP PROCEDURE IF EXISTS [dbo].[PRINTERS_EDIT_PRINTER]
+DROP PROCEDURE IF EXISTS [dbo].[PRINTERS_DELETE_PRINTER]
 
 GO
-CREATE OR ALTER PROCEDURE [dbo].[BANKS_GET_BANK_BY_NAME]
-	@bank_name NVARCHAR(255)
+CREATE OR ALTER PROCEDURE [dbo].[BANKS_GET_BANK]
+	@id INT
 	AS
 	BEGIN 
      SET NOCOUNT ON;
 		SELECT *
 		FROM [dbo].[BANKS]
-		WHERE [name] = @bank_name
+		WHERE [id] = @id AND [is_deleted] = 0
 	END;
 GO
 
@@ -57,7 +50,7 @@ GO
 
 
 CREATE OR ALTER PROCEDURE [dbo].[BANKS_ADD_BANK]
-	@bank_name NVARCHAR(255),
+	@name NVARCHAR(255),
 	@created_by  NVARCHAR(50) = NULL
 	AS
 	BEGIN
@@ -73,7 +66,7 @@ CREATE OR ALTER PROCEDURE [dbo].[BANKS_ADD_BANK]
 			)
 			VALUES
 			(
-				@bank_name,
+				@name,
 				1,
 				0,
 				@created_by,
@@ -85,23 +78,23 @@ CREATE OR ALTER PROCEDURE [dbo].[BANKS_ADD_BANK]
 GO
 
 CREATE OR ALTER PROCEDURE [dbo].[BANKS_EDIT_BANK]
-	@bank_name NVARCHAR(255),
-	@bank_id INT,
+	@name NVARCHAR(255),
+	@id INT,
 	@is_active BIT,
 	@edited_by  NVARCHAR(50) = NULL
 	AS
 	BEGIN 
      SET NOCOUNT ON;
-		IF EXISTS (SELECT [id] FROM [dbo].[BANKS] WHERE [id] = @bank_id  AND [is_deleted] = 0)
+		IF EXISTS (SELECT [id] FROM [dbo].[BANKS] WHERE [id] = @id  AND [is_deleted] = 0)
 		BEGIN
 			UPDATE [dbo].[BANKS]
 			SET 
-				[name] = @bank_name,
+				[name] = @name,
 				[is_active] = @is_active,
 				[edited_by] = @edited_by,
 				[edited_at] = GETDATE()
-			WHERE [id] = @bank_id AND [is_deleted] = 0
-			RETURN @bank_id
+			WHERE [id] = @id AND [is_deleted] = 0
+			RETURN @id
 		END
 		ELSE
 		BEGIN
@@ -111,18 +104,150 @@ CREATE OR ALTER PROCEDURE [dbo].[BANKS_EDIT_BANK]
 GO
 
 CREATE OR ALTER PROCEDURE [dbo].[BANKS_DELETE_BANK]
-	@bank_id INT
+	@id INT
 	AS
 	BEGIN 
      SET NOCOUNT ON;
-		IF EXISTS (SELECT [id] FROM [dbo].[BANKS] WHERE [id] = @bank_id AND [is_deleted] = 0)
+		IF EXISTS (SELECT [id] FROM [dbo].[BANKS] WHERE [id] = @id AND [is_deleted] = 0)
 		BEGIN
 			UPDATE [dbo].[BANKS]
 			SET 
 				[is_deleted] = 1,
 				[is_active] = 0
-			WHERE [id] = @bank_id
-			RETURN @bank_id
+			WHERE [id] = @id
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+GO
+CREATE OR ALTER PROCEDURE [dbo].[PRINTERS_GET_PRINTER]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT *
+		FROM [dbo].[PRINTERS]
+		WHERE [id] = @id AND [is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRINTERS_GET_PRINTERS]
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT
+		[id]
+		,printers.[name]
+      ,[description]
+      ,[model]
+      ,[serial_no]
+      ,[is_active]
+      ,[is_deleted]
+      ,[created_at]
+      ,[edited_at]
+      --,[CREATED_BY]
+	  ,users1.[name] created_by
+      --,[EDITED_BY]
+	  ,users2.[name] edited_by
+	FROM [dbo].[PRINTERS] printers
+	LEFT JOIN [dbo].[USERS] users1
+-- created by not null yaptığımızda inner join olsun
+	ON printers.[created_by] = users1.[sicil]
+-- created by not null yaptığımızda inner join olsun
+	LEFT JOIN [dbo].[USERS] users2
+	ON printers.[edited_by] = users2.[sicil]
+	WHERE printers.[is_deleted] = 0
+	END;
+GO
+
+
+CREATE OR ALTER PROCEDURE [dbo].[PRINTERS_ADD_PRINTER]
+	@name NVARCHAR(255),
+	@model NVARCHAR(255),
+	@serial_no NVARCHAR(255),
+	@description NVARCHAR(1000),
+	@created_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		BEGIN
+			INSERT INTO [dbo].[PRINTERS]
+			(
+				[name],
+				[model],
+				[serial_no],
+				[description],
+				[is_active],
+				[is_deleted],
+				[created_by],
+				[created_at]
+			)
+			VALUES
+			(
+				@name,
+				@model,
+				@serial_no,
+				@description,
+				1,
+				0,
+				@created_by,
+				GETDATE()
+			)
+			RETURN SCOPE_IDENTITY()
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRINTERS_EDIT_PRINTER]
+	@name NVARCHAR(255),
+	@model NVARCHAR(255),
+	@serial_no NVARCHAR(255),
+	@description NVARCHAR(1000),
+	@id INT,
+	@is_active BIT,
+	@edited_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[PRINTERS] WHERE [id] = @id  AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[PRINTERS]
+			SET 
+				[name] = @name,
+				[model] = @model,
+				[serial_no] = @serial_no,
+				[description] = @description,
+				[is_active] = @is_active,
+				[edited_by] = @edited_by,
+				[edited_at] = GETDATE()
+			WHERE [id] = @id AND [is_deleted] = 0
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRINTERS_DELETE_PRINTER]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[PRINTERS] WHERE [id] = @id AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[PRINTERS]
+			SET 
+				[is_deleted] = 1,
+				[is_active] = 0
+			WHERE [id] = @id
+			RETURN @id
 		END
 		ELSE
 		BEGIN

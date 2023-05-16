@@ -7,7 +7,7 @@ export type GetBanksInput = TypeOf<typeof getBanksSchema>;
 
 export const getBankSchema = object({
 	params: object({
-		bankId: string({
+		id: string({
 			required_error: 'ID Parametresi doğrulanamadı.',
 		}),
 	}),
@@ -15,23 +15,23 @@ export const getBankSchema = object({
 
 export const addBankSchema = object({
 	body: object({
-		bankName: string({
-			required_error: 'bankName alanı zorunludur. (String)',
+		name: string({
+			required_error: 'name alanı zorunludur. (String)',
 		}),
 	}),
 });
 
 export const editBankSchema = object({
 	body: object({
-		bankName: string({
-			required_error: 'bankName alanı zorunludur. (String)',
+		name: string({
+			required_error: 'name alanı zorunludur. (String)',
 		}),
-		isActive: boolean({
-			required_error: 'isActive alanı zorunludur. (Boolean)',
+		is_active: boolean({
+			required_error: 'is_active alanı zorunludur. (Boolean)',
 		}),
 	}),
 	params: object({
-		bankId: string({
+		id: string({
 			required_error: 'ID Parametresi doğrulanamadı.',
 		}),
 	}),
@@ -39,7 +39,7 @@ export const editBankSchema = object({
 
 export const deleteBankSchema = object({
 	params: object({
-		bankId: string({
+		id: string({
 			required_error: 'ID Parametresi doğrulanamadı.',
 		}),
 	}),
