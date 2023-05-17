@@ -50,9 +50,12 @@ export async function getShiftController(req: Request<GetShiftInput['params']>, 
 	}
 }
 
-export async function addShiftController(req: Request<AddShiftInput['body']>, res: Response) {
+export async function addShiftController(
+	req: Request<AddShiftInput['params'], AddShiftInput['body']>,
+	res: Response
+) {
 	try {
-		const { description, start_hour, end_hour} = req.body;
+		const { description, start_hour, end_hour } = req.body;
 		const shiftToAdd: Omit<Shift, 'id' | 'is_deleted'> = {
 			description,
 			start_hour,
@@ -83,17 +86,17 @@ export async function editShiftController(
 	res: Response
 ) {
 	try {
-		const { description, start_hour, end_hour, is_active} = req.body;
+		const { description, start_hour, end_hour, is_active } = req.body;
 		const { id } = req.params;
 		const parsedId = parseInt(id);
 
 		const shiftToEdit: Shift = {
 			id: parsedId,
-            description: description,
-            start_hour: start_hour,
-            end_hour: end_hour,
+			description: description,
+			start_hour: start_hour,
+			end_hour: end_hour,
 			is_active: is_active,
-            is_deleted: false,
+			is_deleted: false,
 		};
 
 		const serviceResult = await editShiftService(shiftToEdit);

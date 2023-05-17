@@ -3,7 +3,6 @@ import { TypeOf, object, string, boolean } from 'zod';
 export const getBanksSchema = object({
 	body: object({}),
 });
-export type GetBanksInput = TypeOf<typeof getBanksSchema>;
 
 export const getBankSchema = object({
 	params: object({
@@ -45,6 +44,7 @@ export const deleteBankSchema = object({
 	}),
 });
 
+export type GetBanksInput = TypeOf<typeof getBanksSchema>;
 export type DeleteBankInput = TypeOf<typeof deleteBankSchema>;
 export type GetBankInput = TypeOf<typeof getBankSchema>;
 export type AddBankInput = TypeOf<typeof addBankSchema>;

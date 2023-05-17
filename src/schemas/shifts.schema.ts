@@ -3,7 +3,6 @@ import { TypeOf, object, string, boolean, number } from 'zod';
 export const getShiftsSchema = object({
 	body: object({}),
 });
-export type GetShiftsInput = TypeOf<typeof getShiftsSchema>;
 
 export const getShiftSchema = object({
 	params: object({
@@ -25,6 +24,7 @@ export const addShiftSchema = object({
 			required_error: 'end hour alani zorunludur. (Number)',
 		}),
 	}),
+	params: object({}),
 });
 
 export const editShiftSchema = object({
@@ -57,6 +57,7 @@ export const deleteShiftSchema = object({
 	}),
 });
 
+export type GetShiftsInput = TypeOf<typeof getShiftsSchema>;
 export type DeleteShiftInput = TypeOf<typeof deleteShiftSchema>;
 export type GetShiftInput = TypeOf<typeof getShiftSchema>;
 export type AddShiftInput = TypeOf<typeof addShiftSchema>;

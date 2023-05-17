@@ -17,8 +17,6 @@ import {
 
 const router = Router();
 
-router.get('/healthcheck', (req: Request, res: Response) => res.sendStatus(200));
-
 router.get('/', validateResource(getPrintersSchema), getPrintersController);
 router.get('/:id', validateResource(getPrinterSchema), getPrinterController);
 router.post('/', validateResource(addPrinterSchema), addPrinterController);

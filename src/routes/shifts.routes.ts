@@ -17,8 +17,6 @@ import {
 
 const router = Router();
 
-router.get('/healthcheck', (req: Request, res: Response) => res.sendStatus(200));
-
 router.get('/', validateResource(getShiftsSchema), getShiftsController);
 router.get('/:id', validateResource(getShiftSchema), getShiftController);
 router.post('/', validateResource(addShiftSchema), addShiftController);

@@ -3,7 +3,6 @@ import { TypeOf, object, string, boolean } from 'zod';
 export const getPrintersSchema = object({
 	body: object({}),
 });
-export type GetPrintersInput = TypeOf<typeof getPrintersSchema>;
 
 export const getPrinterSchema = object({
 	params: object({
@@ -63,6 +62,7 @@ export const deletePrinterSchema = object({
 	}),
 });
 
+export type GetPrintersInput = TypeOf<typeof getPrintersSchema>;
 export type DeletePrinterInput = TypeOf<typeof deletePrinterSchema>;
 export type GetPrinterInput = TypeOf<typeof getPrinterSchema>;
 export type AddPrinterInput = TypeOf<typeof addPrinterSchema>;
