@@ -36,16 +36,14 @@ export type Printer = {
 };
 
 export type Shift = {
-	shift_id: number;
+	id: number;
 	description: string;
 	start_hour: number;
 	end_hour: number;
 	is_active: boolean;
 	is_deleted: boolean;
-	createdAt: Date;
-	createdBy: string;
-	editedAt: Date;
-	editedBy: string;
+	created_at?: string;
+	created_by?: string;
+	edited_at?: string;
+	edited_by?: string;
 };
-
-//test
