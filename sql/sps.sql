@@ -10,6 +10,12 @@ DROP PROCEDURE IF EXISTS [dbo].[PRINTERS_ADD_PRINTER]
 DROP PROCEDURE IF EXISTS [dbo].[PRINTERS_EDIT_PRINTER]
 DROP PROCEDURE IF EXISTS [dbo].[PRINTERS_DELETE_PRINTER]
 
+DROP PROCEDURE IF EXISTS [dbo].[SHIFTS_GET_SHIFT]
+DROP PROCEDURE IF EXISTS [dbo].[SHIFTS_GET_SHIFTS]
+DROP PROCEDURE IF EXISTS [dbo].[SHIFTS_ADD_SHIFT]
+DROP PROCEDURE IF EXISTS [dbo].[SHIFTS_EDIT_SHIFT]
+DROP PROCEDURE IF EXISTS [dbo].[SHIFTS_DELETE_SHIFT]
+
 GO
 CREATE OR ALTER PROCEDURE [dbo].[BANKS_GET_BANK]
 	@id INT
@@ -263,3 +269,129 @@ GO
 -- dbo.SHIFTS_GET_SHIFT
 -- dbo.SHIFTS_ADD_SHIFT
 -- dbo.SHIFTS_EDIT_SHIFT
+
+GO
+CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_GET_SHIFT]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT *
+		FROM [dbo].[SHIFTS]
+		WHERE [id] = @id AND [is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_GET_SHIFTS]
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT
+		[id]
+      ,[description]
+      ,[start_hour]
+      ,[end_hour]
+      ,[is_active]
+      ,[is_deleted]
+      ,[created_at]
+      ,[edited_at]
+      --,[CREATED_BY]
+	  ,users1.[name] created_by
+      --,[EDITED_BY]
+	  ,users2.[name] edited_by
+	FROM [dbo].[SHIFTS] shifts
+	LEFT JOIN [dbo].[USERS] users1
+-- created by not null yaptığımızda inner join olsun
+	ON shifts.[created_by] = users1.[sicil]
+-- created by not null yaptığımızda inner join olsun
+	LEFT JOIN [dbo].[USERS] users2
+	ON shifts.[edited_by] = users2.[sicil]
+	WHERE shifts.[is_deleted] = 0
+	END;
+GO
+
+
+CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_ADD_SHIFT]
+	@description NVARCHAR(500),
+	@start_hour INT,
+	@end_hour INT,
+	@created_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		BEGIN
+			INSERT INTO [dbo].[SHIFTS]
+			(
+				[description],
+				[start_hour],
+				[end_hour],
+				[is_active],
+				[is_deleted],
+				[created_by],
+				[created_at]
+			)
+			VALUES
+			(
+				@description,
+				@start_hour,
+				@end_hour,
+				1,
+				0,
+				@created_by,
+				GETDATE()
+			)
+			RETURN SCOPE_IDENTITY()
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_EDIT_SHIFT]
+	@id INT,
+	@description NVARCHAR(500),
+	@start_hour INT,
+	@end_hour INT,
+	@is_active BIT,
+	@edited_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[SHIFTS] WHERE [id] = @id  AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[SHIFTS]
+			SET 
+				[description] = @description,
+				[start_hour] = @start_hour,
+				[end_hour] = @end_hour,
+				[is_active] = @is_active,
+				[edited_by] = @edited_by,
+				[edited_at] = GETDATE()
+			WHERE [id] = @id AND [is_deleted] = 0
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_DELETE_SHIFT]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[SHIFTS] WHERE [id] = @id AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[SHIFTS]
+			SET 
+				[is_deleted] = 1,
+				[is_active] = 0
+			WHERE [id] = @id
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO

@@ -257,8 +257,8 @@ CREATE TABLE [dbo].[ICMAL_STATUS_RECORDS](
 CREATE TABLE [dbo].[SHIFTS](
 	[id] INT IDENTITY(1, 1) PRIMARY KEY,
 	[description] NVARCHAR (500) NOT NULL,
-    [start_hour] SMALLINT NOT NULL,
-    [end_hour] SMALLINT NOT NULL,
+    [start_hour] INT NOT NULL,
+    [end_hour] INT NOT NULL,
     [is_active] BIT NOT NULL DEFAULT 1,
     [is_deleted] BIT NOT NULL DEFAULT 0,
 	[created_at] DATETIME NOT NULL,
