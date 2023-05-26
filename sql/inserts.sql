@@ -5,12 +5,12 @@ INSERT INTO [dbo].[USER_ROLES] ([name] )
     ('ROL 3')
 
 INSERT INTO [dbo].[USERS] 
-    ([sicil], [name], [user_role_id] ) VALUES
-    ( '1011', 'Kullanıcı 1 İsmi', 1),
-    ( '1012', 'Kullanıcı 2 İsmi', 1),
-    ( '1013', 'Kullanıcı 3 İsmi', 2),
-    ( '1014', 'Kullanıcı 4 İsmi', 2),
-    ( '1015', 'Kullanıcı 5 İsmi', 3);
+    ([sicil], [name], [user_role_id], [created_at] ) VALUES
+    ( '1011', 'Kullanıcı 1 İsmi', 1, GETDATE()),
+    ( '1012', 'Kullanıcı 2 İsmi', 1, GETDATE()),
+    ( '1013', 'Kullanıcı 3 İsmi', 2, GETDATE()),
+    ( '1014', 'Kullanıcı 4 İsmi', 2, GETDATE()),
+    ( '1015', 'Kullanıcı 5 İsmi', 3, GETDATE());
 
 INSERT INTO [dbo].[BANKS] 
     ([name], [created_at], [created_by] ) VALUES
@@ -107,3 +107,9 @@ INSERT INTO [dbo].[ICMAL_STATUS_RECORDS]
     (1,3, GETDATE() ),
     (2,2, GETDATE() ),
     (2,3, GETDATE() )
+
+INSERT INTO [dbo].[PRINTERS] 
+    ([name], [description], [model], [serial_no], [created_at], [created_by] ) VALUES
+    ('Makine 1', 'Açıklama...', 'MODEL123', 'ASDQWE789ZXC', GETDATE(), '1014'),
+    ('Makine 2', 'Açıklama...', 'MODEL456', 'ASDQWE345ZXC', GETDATE(), '1014'),
+    ('Makine 3', 'Açıklama...', 'MODEL123', 'ASDQWE456ZXC', GETDATE(), '1014')

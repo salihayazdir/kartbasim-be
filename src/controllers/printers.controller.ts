@@ -18,10 +18,10 @@ import { Printer, ResponseObject } from '../data/models';
 
 export async function getPrintersController(req: Request<GetPrintersInput['body']>, res: Response) {
 	try {
-		const PrintersRecordset = await getPrintersService();
+		const printersRecordset = await getPrintersService();
 		const responseObject: ResponseObject<Printer[]> = {
 			error: false,
-			data: PrintersRecordset,
+			data: printersRecordset,
 		};
 		return res.send(responseObject);
 	} catch (err: any) {
@@ -62,10 +62,10 @@ export async function addPrinterController(req: Request<AddPrinterInput['body']>
 		};
 
 		const serviceResult = await addPrinterService(printerToAdd);
-		const responseObject: ResponseObject<{ insertedPrinterId: number }> = {
+		const responseObject: ResponseObject<{ insertedId: number }> = {
 			error: false,
 			data: {
-				insertedPrinterId: serviceResult,
+				insertedId: serviceResult,
 			},
 		};
 		return res.send(responseObject);
@@ -100,10 +100,10 @@ export async function editPrinterController(
 
 		const serviceResult = await editPrinterService(printerToEdit);
 
-		const responseObject: ResponseObject<{ editedPrinterId: number }> = {
+		const responseObject: ResponseObject<{ editedId: number }> = {
 			error: false,
 			data: {
-				editedPrinterId: serviceResult,
+				editedId: serviceResult,
 			},
 		};
 

@@ -43,6 +43,16 @@ CREATE TABLE [dbo].[USERS](
         CONSTRAINT FK_USERS_USER_ROLES FOREIGN KEY ([user_role_id]) 
         REFERENCES [dbo].[USER_ROLES]([id]) ,
     -- ...ACTIVE DIRECTORY'DEN GELECEK ALANLAR
+    [dn]  NVARCHAR (1000) NULL,
+    [title]  NVARCHAR (200) NULL,
+    [team]  NVARCHAR (200) NULL,
+    [service]  NVARCHAR (200) NULL,
+    [department]  NVARCHAR (200) NULL,
+    [account_name]  NVARCHAR (200) NULL,
+    [mail]  NVARCHAR (200) NULL,
+    [manager_dn]  NVARCHAR (200) NULL,
+    [created_at] DATETIME NOT NULL,
+	[edited_at] DATETIME NULL,
 )
 
 CREATE TABLE [dbo].[BANKS](

@@ -54,10 +54,10 @@ export async function addBankController(req: Request<AddBankInput['body']>, res:
 	try {
 		const { name } = req.body;
 		const serviceResult = await addBankService(name);
-		const responseObject: ResponseObject<{ insertedBankId: number }> = {
+		const responseObject: ResponseObject<{ insertedId: number }> = {
 			error: false,
 			data: {
-				insertedBankId: serviceResult,
+				insertedId: serviceResult,
 			},
 		};
 		return res.send(responseObject);
@@ -89,10 +89,10 @@ export async function editBankController(
 
 		const serviceResult = await editBankService(bankToEdit);
 
-		const responseObject: ResponseObject<{ editedBankId: number }> = {
+		const responseObject: ResponseObject<{ editedId: number }> = {
 			error: false,
 			data: {
-				editedBankId: serviceResult,
+				editedId: serviceResult,
 			},
 		};
 

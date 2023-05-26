@@ -37,8 +37,8 @@ CREATE OR ALTER PROCEDURE [dbo].[BANKS_GET_BANKS]
 		,banks.[name]
       ,[is_active]
       ,[is_deleted]
-      ,[created_at]
-      ,[edited_at]
+      ,banks.[created_at]
+      ,banks.[edited_at]
       --,[CREATED_BY]
 	  ,users1.[name] created_by
       --,[EDITED_BY]
@@ -154,8 +154,8 @@ CREATE OR ALTER PROCEDURE [dbo].[PRINTERS_GET_PRINTERS]
       ,[serial_no]
       ,[is_active]
       ,[is_deleted]
-      ,[created_at]
-      ,[edited_at]
+      ,printers.[created_at]
+      ,printers.[edited_at]
       --,[CREATED_BY]
 	  ,users1.[name] created_by
       --,[EDITED_BY]
@@ -293,8 +293,8 @@ CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_GET_SHIFTS]
       ,[end_hour]
       ,[is_active]
       ,[is_deleted]
-      ,[created_at]
-      ,[edited_at]
+      ,shifts.[created_at]
+      ,shifts.[edited_at]
       --,[CREATED_BY]
 	  ,users1.[name] created_by
       --,[EDITED_BY]
@@ -392,6 +392,59 @@ CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_DELETE_SHIFT]
 		ELSE
 		BEGIN
 			RETURN -1
+		END
+	END;
+GO
+
+
+CREATE OR ALTER PROCEDURE [dbo].[USERS_ADD_USER]
+	@sicil NVARCHAR (50),
+    @name NVARCHAR (200),
+	@user_role_id INT ,
+    @dn  NVARCHAR (1000),
+    @title  NVARCHAR (200),
+    @team  NVARCHAR (200),
+    @service  NVARCHAR (200),
+    @department  NVARCHAR (200),
+    @account_name  NVARCHAR (200),
+    @mail  NVARCHAR (200),
+    @manager_dn  NVARCHAR (200)
+
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		BEGIN
+			INSERT INTO [dbo].[USERS]
+			(
+				[sicil],
+				[name],
+				[user_role_id],
+				[dn],
+				[title],
+				[team],
+				[service],
+				[department],
+				[account_name],
+				[mail],
+				[manager_dn],
+				[created_at]
+			)
+			VALUES
+			(
+				@sicil,
+				@name,
+				@user_role_id,
+				@dn,
+				@title,
+				@team,
+				@service,
+				@department,
+				@account_name,
+				@mail,
+				@manager_dn,
+				GETDATE()
+			)
+			RETURN SCOPE_IDENTITY()
 		END
 	END;
 GO

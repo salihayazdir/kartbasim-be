@@ -5,6 +5,7 @@ import cors from 'cors';
 import banksRouter from './routes/banks.routes';
 import printersRouter from './routes/printers.routes';
 import shiftsRouter from './routes/shifts.routes';
+import authRouter from './routes/auth.routes';
 import errorHandler from './middlewares/errorHandler';
 import 'express-async-errors';
 
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use('/api/banks', banksRouter);
 app.use('/api/printers', printersRouter);
 app.use('/api/shifts', shiftsRouter);
+
+app.use('/api/auth', authRouter);
 app.use(errorHandler);
 
 app.listen(port, () => {

@@ -88,7 +88,7 @@ export async function addPrinterService(
 		if (err.message.indexOf('unique index') !== -1) {
 			const errorDetails: ErrorDetails = {
 				code: 'UNIQUE_INDEX',
-				message: 'Printer seri numarası ve ismi benzersiz olmalıdır.',
+				message: 'Makine seri numarası ve ismi benzersiz olmalıdır.',
 			};
 			throw errorDetails;
 		}
@@ -122,7 +122,7 @@ export async function editPrinterService(printer: Printer) {
 		if (returnValue === -1) {
 			const errorDetails: ErrorDetails = {
 				code: 'NOT_FOUND',
-				message: 'Printer bulunamadı.',
+				message: 'Makine bulunamadı.',
 			};
 			throw errorDetails;
 		}
@@ -132,7 +132,7 @@ export async function editPrinterService(printer: Printer) {
 		if (err.message.indexOf('unique index') !== -1) {
 			const errorDetails: ErrorDetails = {
 				code: 'UNIQUE_INDEX',
-				message: 'Printer seri numarası ve ismi benzersiz olmalıdır.',
+				message: 'Makine seri numarası ve ismi benzersiz olmalıdır.',
 			};
 			throw errorDetails;
 		}
@@ -158,7 +158,7 @@ export async function deletePrinterService(id: number) {
 		if (returnValue === -1) {
 			const errorDetails: ErrorDetails = {
 				code: 'NOT_FOUND',
-				message: 'Printer bulunamadı.',
+				message: 'Makine bulunamadı.',
 			};
 			throw errorDetails;
 		}
