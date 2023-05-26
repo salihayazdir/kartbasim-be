@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import logger from '../utils/logger';
-import { testService } from '../services/auth.service';
+import { updateUsersService } from '../services/users.service';
 import { SearchEntryObject } from 'ldapjs';
 import { ResponseObject } from '../data/models';
 
@@ -20,9 +20,9 @@ import { ResponseObject } from '../data/models';
 // } from '../schemas/banks.schema';
 // import { Bank, ResponseObject } from '../data/models';
 
-export async function test(req: Request, res: Response) {
+export async function updateUsersController(req: Request, res: Response) {
 	try {
-		testService((ldapData) => {
+		updateUsersService((ldapData) => {
 			const responseObject: ResponseObject<SearchEntryObject> = {
 				error: false,
 				data: ldapData,

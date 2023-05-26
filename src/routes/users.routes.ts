@@ -6,7 +6,7 @@ import {
 	editBankController,
 	deleteBankController,
 } from '../controllers/banks.controller';
-import { test } from '../controllers/auth.controller';
+import { updateUsersController } from '../controllers/users.controller';
 // import validateResource from '../middlewares/validateResource';
 // import {
 // 	getBanksSchema,
@@ -18,8 +18,6 @@ import { test } from '../controllers/auth.controller';
 
 const router = Router();
 
-router.get('/healthcheck', (req: Request, res: Response) => res.sendStatus(200));
-
-router.get('/', test);
+router.get('/', updateUsersController);
 
 export default router;

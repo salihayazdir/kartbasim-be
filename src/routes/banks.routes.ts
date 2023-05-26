@@ -17,8 +17,6 @@ import {
 
 const router = Router();
 
-router.get('/healthcheck', (req: Request, res: Response) => res.sendStatus(200));
-
 router.get('/', validateResource(getBanksSchema), getBanksController);
 router.get('/:id', validateResource(getBankSchema), getBankController);
 router.post('/', validateResource(addBankSchema), addBankController);

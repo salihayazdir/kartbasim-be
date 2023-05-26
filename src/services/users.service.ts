@@ -7,14 +7,17 @@ import { Client, SearchEntryObject, SearchOptions } from 'ldapjs';
 const ldap = require('ldapjs');
 
 const dbConfig = config.get<string>('dev.db');
+const ldapConfig = config.get<{ ip1: string; ip2: string; user: string; password: string }>(
+	'dev.ldap'
+);
 
-export async function testService(fn: (a: any) => any) {
+export async function updateUsersService(fn: (a: any) => any) {
 	try {
 		const client: Client = ldap.createClient({
-			url: ['ldap://10.2.161.8:389', 'ldap://10.2.161.9:389'],
+			url: [ldapConfig.ip1, ldapConfig.ip2],
 		});
 
-		client.bind('calismaplaniservices@bilesim', 'P@$41!++%!', (err) => {
+		client.bind(ldapConfig.user, ldapConfig.password, (err) => {
 			if (err) {
 				logger.error(`LDAP Bind Error : ${err}`);
 			}
