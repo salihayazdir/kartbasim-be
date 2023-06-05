@@ -17,8 +17,8 @@ export async function getShiftsService() {
 		const { recordset } = result;
 		const recordsetDatesAdjusted: Shift[] = recordset.map((record) => ({
 			...record,
-			created_at: record.created_at ? utcOffset(record.created_at) : record.created_at,
-			edited_at: record.edited_at ? utcOffset(record.edited_at) : record.edited_at,
+			created_at: record.created_at ? utcOffset(record.created_at)?.format() : record.created_at,
+			edited_at: record.edited_at ? utcOffset(record.edited_at)?.format() : record.edited_at,
 		}));
 		return recordsetDatesAdjusted;
 	} catch (err: any) {
@@ -51,8 +51,8 @@ export async function getShiftService(id: number) {
 
 		const recordsetDatesAdjusted: Shift[] = recordset.map((record) => ({
 			...record,
-			created_at: record.created_at ? utcOffset(record.created_at) : record.created_at,
-			edited_at: record.edited_at ? utcOffset(record.edited_at) : record.edited_at,
+			created_at: record.created_at ? utcOffset(record.created_at)?.format() : record.created_at,
+			edited_at: record.edited_at ? utcOffset(record.edited_at)?.format() : record.edited_at,
 		}));
 
 		return recordsetDatesAdjusted;
@@ -66,11 +66,9 @@ export async function getShiftService(id: number) {
 	}
 }
 
-export async function addShiftService(
-	shift: Omit<Shift, 'id' | 'is_deleted'>
-): Promise<number> {
+export async function addShiftService(shift: Omit<Shift, 'id' | 'is_deleted'>): Promise<number> {
 	try {
-		const { description, start_hour, end_hour} = shift;
+		const { description, start_hour, end_hour } = shift;
 
 		const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
 		const result: IProcedureResult<Shift> = await (await pool)
@@ -101,7 +99,7 @@ export async function editShiftService(shift: Shift) {
 			.request()
 			.input('id', sql.Int, id)
 			.input('description', sql.NVarChar, description)
-            .input('start_hour', sql.Int, start_hour)
+			.input('start_hour', sql.Int, start_hour)
 			.input('end_hour', sql.Int, end_hour)
 			.input('is_active', sql.Bit, is_active)
 			.execute('dbo.SHIFTS_EDIT_SHIFT');
@@ -155,4 +153,3 @@ export async function deleteShiftService(id: number) {
 		throw errorDetails;
 	}
 }
-

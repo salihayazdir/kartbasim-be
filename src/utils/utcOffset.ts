@@ -1,11 +1,11 @@
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
-export default function utcOffset(dateString: string): string | undefined {
+export default function utcOffset(dateString: string): Dayjs {
 	dayjs.extend(utc);
 
-	const offsettedDate = dayjs(dateString).utcOffset(0, false).utcOffset(3, true).format();
+	// const offsettedDate = dayjs.utc(dateString).utcOffset(0, false).utcOffset(3, true);
+	const offsettedDate = dayjs(dateString).subtract(3, 'hour');
 
-	if (dayjs(dateString).isValid()) return offsettedDate;
-	return undefined;
+	return offsettedDate;
 }

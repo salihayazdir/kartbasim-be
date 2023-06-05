@@ -77,17 +77,19 @@ export async function updateUsersService(fn: (a: any) => any) {
 						try {
 							const userRoleId = 1;
 							const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
-							const result: IProcedureResult<any> = await (await pool)
+							const result: IProcedureResult<any> = await (
+								await pool
+							)
 								.request()
 								.input('sicil', sql.NVarChar, user.extensionAttribute1)
-								.input('name', sql.NVarChar, user.cn)
+								.input('name', sql.NVarChar, toTitleCase(`${user.cn}`))
 								.input('user_role_id', sql.Int, userRoleId)
 								.input('dn', sql.NVarChar, user.dn)
 								.input('title', sql.NVarChar, user.title)
 								.input('team', sql.NVarChar, user.physicalDeliveryOfficeName)
 								.input('service', sql.NVarChar, user.description)
 								.input('department', sql.NVarChar, user.department)
-								.input('account_name', sql.NVarChar, user.sAMAccountName)
+								.input('username', sql.NVarChar, user.sAMAccountName)
 								.input('mail', sql.NVarChar, user.mail)
 								.input('manager_dn', sql.NVarChar, user.manager)
 								.execute('dbo.USERS_ADD_USER');

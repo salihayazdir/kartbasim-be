@@ -1,23 +1,10 @@
-import { Request, Response, Router } from 'express';
-import {
-	getBankController,
-	getBanksController,
-	addBankController,
-	editBankController,
-	deleteBankController,
-} from '../controllers/banks.controller';
-import { updateUsersController } from '../controllers/users.controller';
-// import validateResource from '../middlewares/validateResource';
-// import {
-// 	getBanksSchema,
-// 	getBankSchema,
-// 	addBankSchema,
-// 	editBankSchema,
-// 	deleteBankSchema,
-// } from '../schemas/banks.schema';
+import { Router } from 'express';
+import { getUserController, updateUsersController } from '../controllers/users.controller';
+import requireUser from '../middlewares/requireUser';
 
 const router = Router();
 
-router.get('/', updateUsersController);
+router.get('/me', requireUser, getUserController);
+router.get('/update', updateUsersController);
 
 export default router;

@@ -17,8 +17,8 @@ export async function getBanksService() {
 		const { recordset } = result;
 		const recordsetDatesAdjusted: Bank[] = recordset.map((record) => ({
 			...record,
-			created_at: record.created_at ? utcOffset(record.created_at) : record.created_at,
-			edited_at: record.edited_at ? utcOffset(record.edited_at) : record.edited_at,
+			created_at: record.created_at ? utcOffset(record.created_at)?.format() : record.created_at,
+			edited_at: record.edited_at ? utcOffset(record.edited_at)?.format() : record.edited_at,
 		}));
 		return recordsetDatesAdjusted;
 	} catch (err: any) {
@@ -50,8 +50,8 @@ export async function getBankService(id: number) {
 		}
 		const recordsetDatesAdjusted: Bank[] = recordset.map((record) => ({
 			...record,
-			created_at: record.created_at ? utcOffset(record.created_at) : record.created_at,
-			edited_at: record.edited_at ? utcOffset(record.edited_at) : record.edited_at,
+			created_at: record.created_at ? utcOffset(record.created_at)?.format() : record.created_at,
+			edited_at: record.edited_at ? utcOffset(record.edited_at)?.format() : record.edited_at,
 		}));
 
 		return recordsetDatesAdjusted;

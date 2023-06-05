@@ -47,3 +47,21 @@ export type Shift = {
 	edited_at?: string;
 	edited_by?: string;
 };
+
+export type User = {
+	username: string;
+	mail: string;
+	user_role_id: number;
+	name: string;
+	sicil: string;
+	dn: string;
+	title: string;
+	team: string;
+	service: string;
+	department: string;
+	created_at: string;
+	edited_at: string;
+	is_active: boolean;
+	manager_name: string;
+	manager_username: string;
+};

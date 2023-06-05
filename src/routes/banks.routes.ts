@@ -1,4 +1,4 @@
-import { Request, Response, Router } from 'express';
+import { Router } from 'express';
 import {
 	getBankController,
 	getBanksController,
@@ -14,10 +14,11 @@ import {
 	editBankSchema,
 	deleteBankSchema,
 } from '../schemas/banks.schema';
+import requireUser from '../middlewares/requireUser';
 
 const router = Router();
 
-router.get('/', validateResource(getBanksSchema), getBanksController);
+router.get('/', requireUser, validateResource(getBanksSchema), getBanksController);
 router.get('/:id', validateResource(getBankSchema), getBankController);
 router.post('/', validateResource(addBankSchema), addBankController);
 router.put('/:id', validateResource(editBankSchema), editBankController);

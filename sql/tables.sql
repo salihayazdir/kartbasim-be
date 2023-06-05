@@ -27,6 +27,8 @@ DROP TABLE IF EXISTS [dbo].[PRODUCT_TYPES]
 DROP TABLE IF EXISTS [dbo].[BANKS]
     DROP INDEX IF EXISTS [dbo].[BANKS].[BANKS_NAME_UNIQUE]
 
+DROP TABLE IF EXISTS [dbo].[AUTH_OTP]
+DROP TABLE IF EXISTS [dbo].[AUTH_SESSION]
 DROP TABLE IF EXISTS [dbo].[USERS]
 DROP TABLE IF EXISTS [dbo].[USER_ROLES]
 
@@ -37,23 +39,45 @@ CREATE TABLE [dbo].[USER_ROLES](
 )
 
 CREATE TABLE [dbo].[USERS](
-	[sicil] NVARCHAR (50) PRIMARY KEY,
-    [name] NVARCHAR (200) NOT NULL,
-	[user_role_id] INT NOT NULL,
+	[username] NVARCHAR (50) PRIMARY KEY,
+	[user_role_id] INT NOT NULL DEFAULT 1,
         CONSTRAINT FK_USERS_USER_ROLES FOREIGN KEY ([user_role_id]) 
         REFERENCES [dbo].[USER_ROLES]([id]) ,
-    -- ...ACTIVE DIRECTORY'DEN GELECEK ALANLAR
+    [name] NVARCHAR (200) NOT NULL,
+    [sicil]  NVARCHAR (50) NOT NULL UNIQUE,
     [dn]  NVARCHAR (1000) NULL,
     [title]  NVARCHAR (200) NULL,
     [team]  NVARCHAR (200) NULL,
     [service]  NVARCHAR (200) NULL,
     [department]  NVARCHAR (200) NULL,
-    [account_name]  NVARCHAR (200) NULL,
-    [mail]  NVARCHAR (200) NULL,
+    [mail]  NVARCHAR (200) NOT NULL UNIQUE,
     [manager_dn]  NVARCHAR (200) NULL,
     [created_at] DATETIME NOT NULL,
 	[edited_at] DATETIME NULL,
+	[is_active] BIT NOT NULL DEFAULT 1
 )
+
+CREATE TABLE [dbo].[AUTH_OTP] (
+	[id] INT IDENTITY(1,1) PRIMARY KEY,
+	[code] NVARCHAR (500) NOT NULL ,
+	[username] NVARCHAR (50)
+		CONSTRAINT FK_USERS_AUTH_OTP FOREIGN KEY (username) 
+		REFERENCES [dbo].[USERS]([username]) NOT NULL ,
+	[created_at] DATETIME NOT NULL,
+)
+GO
+
+CREATE TABLE [dbo].[AUTH_SESSION] (
+	[id] INT IDENTITY(1,1) PRIMARY KEY,
+	[username] NVARCHAR (50)
+		CONSTRAINT FK_USERS_AUTH_SESSION FOREIGN KEY (username) 
+		REFERENCES [dbo].[USERS]([username]) NOT NULL ,
+	[created_at] DATETIME NOT NULL,
+    [is_valid] BIT NOT NULL DEFAULT 1,
+);
+CREATE UNIQUE INDEX AUTH_SESSION_USERNAME_UNIQUE ON
+    [dbo].[AUTH_SESSION] ([username]);
+GO
 
 CREATE TABLE [dbo].[BANKS](
     [id] INT IDENTITY(1, 1) PRIMARY KEY,
@@ -64,10 +88,10 @@ CREATE TABLE [dbo].[BANKS](
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_BANKS_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
     [edited_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_BANKS_EDITED_BY_USERS FOREIGN KEY ([edited_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 );
  
 CREATE UNIQUE INDEX BANKS_NAME_UNIQUE ON
@@ -83,10 +107,10 @@ CREATE TABLE [dbo].[PRODUCT_TYPES](
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_PRODUCT_TYPES_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
     [edited_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_PRODUCT_TYPES_EDITED_BY_USERS FOREIGN KEY ([edited_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 )
 
 CREATE TABLE [dbo].[PRODUCT_GROUPS](
@@ -103,10 +127,10 @@ CREATE TABLE [dbo].[PRODUCT_GROUPS](
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_PRODUCT_GROUPS_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
     [edited_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_PRODUCT_GROUPS_EDITED_BY_USERS FOREIGN KEY ([edited_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 )
 
 CREATE TABLE [dbo].[PRODUCTS](
@@ -128,10 +152,10 @@ CREATE TABLE [dbo].[PRODUCTS](
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_PRODUCTS_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
     [edited_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_PRODUCTS_EDITED_BY_USERS FOREIGN KEY ([edited_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 )
 
 CREATE TABLE [dbo].[PRODUCT_STOCK_RECORD_TYPES](
@@ -151,7 +175,7 @@ CREATE TABLE [dbo].[PRODUCT_STOCK_RECORDS](
 	[created_at] DATETIME NOT NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_PRODUCT_STOCK_RECORDS_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil])
+        REFERENCES [dbo].[USERS]([username])
 )
 
 CREATE TABLE [dbo].[CONSUMABLE_TYPES](
@@ -163,10 +187,10 @@ CREATE TABLE [dbo].[CONSUMABLE_TYPES](
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_CONSUMABLE_TYPES_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
     [edited_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_CONSUMABLE_TYPES_EDITED_BY_USERS FOREIGN KEY ([edited_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 )
 
 CREATE TABLE [dbo].[CONSUMABLES](
@@ -182,10 +206,10 @@ CREATE TABLE [dbo].[CONSUMABLES](
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_CONSUMABLES_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
     [edited_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_CONSUMABLES_EDITED_BY_USERS FOREIGN KEY ([edited_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 )
 
 CREATE TABLE [dbo].[CONSUMABLE_PRODUCT_RECORDS](
@@ -218,7 +242,7 @@ CREATE TABLE [dbo].[BATCH](
 	[created_at] DATETIME NOT NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_BATCH_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 )
 
 CREATE TABLE [dbo].[ICMAL](
@@ -242,10 +266,10 @@ CREATE TABLE [dbo].[ICMAL](
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_ICMAL_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
     [edited_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_ICMAL_EDITED_BY_USERS FOREIGN KEY ([edited_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 )
 
 CREATE TABLE [dbo].[ICMAL_STATUSES](
@@ -275,10 +299,10 @@ CREATE TABLE [dbo].[SHIFTS](
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_SHIFTS_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
     [edited_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_SHIFTS_EDITED_BY_USERS FOREIGN KEY ([edited_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 )
 
 CREATE TABLE [dbo].[PRINTERS](
@@ -293,10 +317,10 @@ CREATE TABLE [dbo].[PRINTERS](
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_PRINTERS_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
     [edited_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_PRINTERS_EDITED_BY_USERS FOREIGN KEY ([edited_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 )
  
 CREATE UNIQUE INDEX PRINTERS_NAME_UNIQUE ON
@@ -318,10 +342,10 @@ CREATE TABLE [dbo].[SHIFT_REPORTS](
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_SHIFT_REPORTS_CREATED_BY_USERS FOREIGN KEY ([created_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
     [edited_by] NVARCHAR(50) NULL,
         CONSTRAINT FK_SHIFT_REPORTS_EDITED_BY_USERS FOREIGN KEY ([edited_by]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 )
 
 CREATE TABLE [dbo].[SHIFT_REPORT_PRINTER_RECORDS](
@@ -344,6 +368,6 @@ CREATE TABLE [dbo].[SHIFT_REPORT_USER_RECORDS](
         REFERENCES [dbo].[SHIFT_REPORTS]([id]) ,
 	[user_sicil] NVARCHAR (50) NOT NULL,
         CONSTRAINT FK_SHIFT_REPORT_USER_RECORDS_USERS FOREIGN KEY ([user_sicil]) 
-        REFERENCES [dbo].[USERS]([sicil]) ,
+        REFERENCES [dbo].[USERS]([username]) ,
 	[description] NVARCHAR (500) NOT NULL,
 )
