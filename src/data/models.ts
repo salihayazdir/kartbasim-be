@@ -48,6 +48,72 @@ export type Shift = {
 	edited_by?: string;
 };
 
+export type ProductType = {
+	id: number;
+	name: string;
+	is_active: boolean;
+	is_deleted: boolean;
+	created_at?: string;
+	created_by?: string;
+	edited_at?: string;
+	edited_by?: string;
+};
+
+export type ProductGroup = {
+	id: number;
+	name: string;
+	is_active: boolean;
+	is_deleted: boolean;
+	bank_id: number;
+	client_id?: string; // Zorunlu olmayan alan
+	description: string;
+	created_at?: string;
+	created_by?: string;
+	edited_at?: string;
+	edited_by?: string;
+};
+
+export type Product = {
+	id: number;
+	name: string;
+	is_active: boolean;
+	is_deleted: boolean;
+	product_type_id: number;
+	product_group_id: number;
+	client_id?: string; // Zorunlu olmayan alan
+	description: string;
+	main_safe_quantity?: number; // 	Edit'te zorunlu değil, Zorunlu değil - Add'de 0
+	daily_safe_quantity?: number; // Edit'te zorunlu değil, Zorunlu değil - Add'de 0
+	created_at?: string;
+	created_by?: string;
+	edited_at?: string;
+	edited_by?: string;
+};
+
+export type Consumable = {
+	id: number;
+	name: string;
+	is_active: boolean;
+	is_deleted: boolean;
+	consumable_type_id: number;
+	multiplier: number;
+	created_at?: string;
+	created_by?: string;
+	edited_at?: string;
+	edited_by?: string;
+};
+
+export type ConsumableType = {
+	id: number;
+	name: string;
+	is_active: boolean;
+	is_deleted: boolean;
+	created_at?: string;
+	created_by?: string;
+	edited_at?: string;
+	edited_by?: string;
+};
+
 export type User = {
 	username: string;
 	mail: string;

@@ -24,7 +24,35 @@ DROP PROCEDURE IF EXISTS [dbo].[AUTH_OTP_GET_OTP]
 DROP PROCEDURE IF EXISTS [dbo].[AUTH_SESSION_ADD_SESSION]
 DROP PROCEDURE IF EXISTS [dbo].[AUTH_SESSION_GET_SESSION]
 
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_GROUPS_GET_PRODUCT_GROUP]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_GROUPS_GET_PRODUCT_GROUPS]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_GROUPS_ADD_PRODUCT_GROUP]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_GROUPS_EDIT_PRODUCT_GROUP]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_GROUPS_DELETE_PRODUCT_GROUP]
 
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_TYPES_GET_PRODUCT_TYPE]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_TYPES_GET_PRODUCT_TYPES]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_TYPES_ADD_PRODUCT_TYPE]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_TYPES_EDIT_PRODUCT_TYPE]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_TYPES_DELETE_PRODUCT_TYPE]
+
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCTS_GET_PRODUCT]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCTS_GET_PRODUCTS]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCTS_ADD_PRODUCT]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCTS_EDIT_PRODUCT]
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCTS_DELETE_PRODUCT]
+
+DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLE_TYPES_GET_CONSUMABLE_TYPE]
+DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLE_TYPES_GET_CONSUMABLE_TYPES]
+DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLE_TYPES_ADD_CONSUMABLE_TYPE]
+DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLE_TYPES_EDIT_CONSUMABLE_TYPE]
+DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLE_TYPES_DELETE_CONSUMABLE_TYPE]
+
+DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLES_GET_CONSUMABLE]
+DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLES_GET_CONSUMABLES]
+DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLES_ADD_CONSUMABLE]
+DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLES_EDIT_CONSUMABLE]
+DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLES_DELETE_CONSUMABLE]
 
 GO
 CREATE OR ALTER PROCEDURE [dbo].[BANKS_GET_BANK]
@@ -42,28 +70,23 @@ CREATE OR ALTER PROCEDURE [dbo].[BANKS_GET_BANKS]
 	AS
 	BEGIN 
      SET NOCOUNT ON;
-		SELECT
-		[id]
-		,banks.[name]
-		,banks.[is_active]
-		,banks.[is_deleted]
-		,banks.[created_at]
-		,banks.[edited_at]
-      --,[CREATED_BY]
-		,users1.[name] created_by
-      --,[EDITED_BY]
-		,users2.[name] edited_by
+	SELECT
+		banks.[id],
+		banks.[name],
+		banks.[is_active],
+		banks.[is_deleted],
+		banks.[created_at],
+		banks.[edited_at],
+		users1.[name] created_by,
+		users2.[name] edited_by
 	FROM [dbo].[BANKS] banks
 	LEFT JOIN [dbo].[USERS] users1
--- created by not null yaptığımızda inner join olsun
-	ON banks.[created_by] = users1.[sicil]
--- created by not null yaptığımızda inner join olsun
+		ON banks.[created_by] = users1.[username]
 	LEFT JOIN [dbo].[USERS] users2
-	ON banks.[edited_by] = users2.[sicil]
+		ON banks.[edited_by] = users2.[username]
 	WHERE banks.[is_deleted] = 0
 	END;
 GO
-
 
 CREATE OR ALTER PROCEDURE [dbo].[BANKS_ADD_BANK]
 	@name NVARCHAR(255),
@@ -157,30 +180,25 @@ CREATE OR ALTER PROCEDURE [dbo].[PRINTERS_GET_PRINTERS]
 	BEGIN 
 	SET NOCOUNT ON;
 		SELECT
-			[id]
-			,printers.[name]
-			,printers.[description]
-			,printers.[model]
-			,printers.[serial_no]
-			,printers.[is_active]
-			,printers.[is_deleted]
-			,printers.[created_at]
-			,printers.[edited_at]
-			--,[CREATED_BY]
-			,users1.[name] created_by
-			--,[EDITED_BY]
-			,users2.[name] edited_by
+			printers.[id],
+			printers.[name],
+			printers.[description],
+			printers.[model],
+			printers.[serial_no],
+			printers.[is_active],
+			printers.[is_deleted],
+			printers.[created_at],
+			printers.[edited_at],
+			users1.[name] created_by,
+			users2.[name] edited_by
 		FROM [dbo].[PRINTERS] printers
 		LEFT JOIN [dbo].[USERS] users1
-		-- created by not null yaptığımızda inner join olsun
-			ON printers.[created_by] = users1.[sicil]
-		-- created by not null yaptığımızda inner join olsun
+			ON printers.[created_by] = users1.[username]
 		LEFT JOIN [dbo].[USERS] users2
-			ON printers.[edited_by] = users2.[sicil]
+			ON printers.[edited_by] = users2.[username]
 		WHERE printers.[is_deleted] = 0
 	END;
 GO
-
 
 CREATE OR ALTER PROCEDURE [dbo].[PRINTERS_ADD_PRINTER]
 	@name NVARCHAR(255),
@@ -272,141 +290,6 @@ CREATE OR ALTER PROCEDURE [dbo].[PRINTERS_DELETE_PRINTER]
 	END;
 GO
 
-
--- SHIFT SPs:
--- dbo.SHIFTS_GET_SHIFTS
--- dbo.SHIFTS_DELETE_SHIFT
--- dbo.SHIFTS_GET_SHIFT
--- dbo.SHIFTS_ADD_SHIFT
--- dbo.SHIFTS_EDIT_SHIFT
-
---GO
---CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_GET_SHIFT]
---	@id INT
---	AS
---	BEGIN 
---     SET NOCOUNT ON;
---		SELECT *
---		FROM [dbo].[SHIFTS]
---		WHERE [id] = @id AND [is_deleted] = 0
---	END;
---GO
-
---CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_GET_SHIFTS]
---	AS
---	BEGIN 
---     SET NOCOUNT ON;
---		SELECT
---		[id]
---      ,[description]
---      ,[start_hour]
---      ,[end_hour]
---      ,[is_active]
---      ,[is_deleted]
---      ,shifts.[created_at]
---      ,shifts.[edited_at]
---      --,[CREATED_BY]
---	  ,users1.[name] created_by
---      --,[EDITED_BY]
---	  ,users2.[name] edited_by
---	FROM [dbo].[SHIFTS] shifts
---	LEFT JOIN [dbo].[USERS] users1
----- created by not null yaptığımızda inner join olsun
---	ON shifts.[created_by] = users1.[sicil]
----- created by not null yaptığımızda inner join olsun
---	LEFT JOIN [dbo].[USERS] users2
---	ON shifts.[edited_by] = users2.[sicil]
---	WHERE shifts.[is_deleted] = 0
---	END;
---GO
-
-
---CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_ADD_SHIFT]
---	@description NVARCHAR(500),
---	@start_hour INT,
---	@end_hour INT,
---	@created_by  NVARCHAR(50) = NULL
---	AS
---	BEGIN
---     SET NOCOUNT ON;
---		BEGIN
---			INSERT INTO [dbo].[SHIFTS]
---			(
---				[description],
---				[start_hour],
---				[end_hour],
---				[is_active],
---				[is_deleted],
---				[created_by],
---				[created_at]
---			)
---			VALUES
---			(
---				@description,
---				@start_hour,
---				@end_hour,
---				1,
---				0,
---				@created_by,
---				GETDATE()
---			)
---			RETURN SCOPE_IDENTITY()
---		END
---	END;
---GO
-
---CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_EDIT_SHIFT]
---	@id INT,
---	@description NVARCHAR(500),
---	@start_hour INT,
---	@end_hour INT,
---	@is_active BIT,
---	@edited_by  NVARCHAR(50) = NULL
---	AS
---	BEGIN
---     SET NOCOUNT ON;
---		IF EXISTS (SELECT [id] FROM [dbo].[SHIFTS] WHERE [id] = @id  AND [is_deleted] = 0)
---		BEGIN
---			UPDATE [dbo].[SHIFTS]
---			SET 
---				[description] = @description,
---				[start_hour] = @start_hour,
---				[end_hour] = @end_hour,
---				[is_active] = @is_active,
---				[edited_by] = @edited_by,
---				[edited_at] = GETDATE()
---			WHERE [id] = @id AND [is_deleted] = 0
---			RETURN @id
---		END
---		ELSE
---		BEGIN
---			RETURN -1
---		END
---	END;
---GO
-
---CREATE OR ALTER PROCEDURE [dbo].[SHIFTS_DELETE_SHIFT]
---	@id INT
---	AS
---	BEGIN 
---     SET NOCOUNT ON;
---		IF EXISTS (SELECT [id] FROM [dbo].[SHIFTS] WHERE [id] = @id AND [is_deleted] = 0)
---		BEGIN
---			UPDATE [dbo].[SHIFTS]
---			SET 
---				[is_deleted] = 1,
---				[is_active] = 0
---			WHERE [id] = @id
---			RETURN @id
---		END
---		ELSE
---		BEGIN
---			RETURN -1
---		END
---	END;
---GO
-
-
 CREATE OR ALTER PROCEDURE [dbo].[USERS_ADD_USER]
 	@sicil NVARCHAR (50),
     @name NVARCHAR (200),
@@ -459,7 +342,7 @@ CREATE OR ALTER PROCEDURE [dbo].[USERS_ADD_USER]
 	END;
 GO
 
-GO
+
 CREATE OR ALTER PROCEDURE [dbo].[USERS_GET_USER]
 	@username NVARCHAR (50)
 	AS
@@ -510,7 +393,7 @@ CREATE OR ALTER PROCEDURE [dbo].[AUTH_OTP_ADD_OTP]
 	END;
 GO
 
-GO
+
 CREATE OR ALTER PROCEDURE [dbo].[AUTH_OTP_GET_OTP]
 	@username NVARCHAR (50)
 	AS
@@ -564,5 +447,637 @@ CREATE OR ALTER PROCEDURE [dbo].[AUTH_SESSION_GET_SESSION]
 		SELECT *
 		FROM [dbo].[AUTH_SESSION]
 		WHERE [id] = @sessionId;
+	END;
+GO
+
+
+GO
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_GROUPS_GET_PRODUCT_GROUP]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT *
+		FROM [dbo].[PRODUCT_GROUPS]
+		WHERE [id] = @id AND [is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_GROUPS_GET_PRODUCT_GROUPS]
+	AS
+	BEGIN 
+    SET NOCOUNT ON;
+		SELECT
+			productGroups.[id],
+    		productGroups.[name],
+    		productGroups.[bank_id],
+			banks.[name] bank_name,
+			productGroups.[client_id],
+			productGroups.[description],
+    		productGroups.[is_active],
+    		productGroups.[is_deleted],
+    		productGroups.[created_at],
+    		productGroups.[edited_at],
+    		productGroups.[created_by],
+    		productGroups.[edited_by],
+			users1.[name] created_by_name,
+			users2.[name] edited_by_name
+		FROM [dbo].[PRODUCT_GROUPS] productGroups
+		LEFT JOIN [dbo].[USERS] users1
+			ON productGroups.[created_by] = users1.[username]
+		LEFT JOIN [dbo].[USERS] users2
+			ON productGroups.[edited_by] = users2.[username]
+		LEFT JOIN [dbo].[BANKS] banks
+			ON productGroups.[bank_id] = banks.[id]
+		WHERE productGroups.[is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_GROUPS_ADD_PRODUCT_GROUP]
+	@name NVARCHAR(50),
+	@bank_id INT,
+	@client_id NVARCHAR(100) = NULL,
+	@description NVARCHAR(500),
+	@created_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		BEGIN
+			INSERT INTO [dbo].[PRODUCT_GROUPS]
+			(
+				[name],
+				[bank_id],
+				[client_id],
+				[description],
+				[is_active],
+				[is_deleted],
+				[created_by],
+				[created_at]
+			)
+			VALUES
+			(
+				@name,
+				@bank_id,
+				@client_id,
+				@description,
+				1,
+				0,
+				@created_by,
+			    GETDATE()
+			)
+			RETURN SCOPE_IDENTITY()
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_GROUPS_EDIT_PRODUCT_GROUP]
+	@id INT,
+	@name NVARCHAR(50),
+	@bank_id INT,
+	@client_id NVARCHAR(100),
+	@description NVARCHAR(500),
+	@is_active BIT,
+	@edited_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[PRODUCT_GROUPS] WHERE [id] = @id  AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[PRODUCT_GROUPS]
+			SET 
+				[name] = @name,
+				[bank_id] = @bank_id,
+				[client_id] = @client_id,
+				[description] = @description,
+				[is_active] = @is_active,
+				[edited_by] = @edited_by,
+				[edited_at] = GETDATE()
+			WHERE [id] = @id AND [is_deleted] = 0
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_GROUPS_DELETE_PRODUCT_GROUP]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[PRODUCT_GROUPS] WHERE [id] = @id AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[PRODUCT_GROUPS]
+			SET 
+				[is_deleted] = 1,
+				[is_active] = 0
+			WHERE [id] = @id
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+GO
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_TYPES_GET_PRODUCT_TYPE]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT *
+		FROM [dbo].[PRODUCT_TYPES]
+		WHERE [id] = @id AND [is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_TYPES_GET_PRODUCT_TYPES]
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT
+			productTypes.[id],
+    		productTypes.[name],
+    		productTypes.[is_active],
+    		productTypes.[is_deleted],
+    		productTypes.[created_at],
+    		productTypes.[edited_at],
+    		productTypes.[created_by],
+    		productTypes.[edited_by],
+			users1.[name] created_by_name,
+			users2.[name] edited_by_name
+		FROM [dbo].[PRODUCT_TYPES] productTypes
+		LEFT JOIN [dbo].[USERS] users1
+			ON productTypes.[created_by] = users1.[username]
+		LEFT JOIN [dbo].[USERS] users2
+			ON productTypes.[edited_by] = users2.[username]
+		WHERE productTypes.[is_deleted] = 0
+	END;
+GO
+
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_TYPES_ADD_PRODUCT_TYPE]
+	@name NVARCHAR(50),
+	@created_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		BEGIN
+			INSERT INTO [dbo].[PRODUCT_TYPES]
+			(
+				[name],
+				[is_active],
+				[is_deleted],
+				[created_by],
+				[created_at]
+			)
+			VALUES
+			(
+				@name,
+				1,
+				0,
+				@created_by,
+			    GETDATE()
+			)
+			RETURN SCOPE_IDENTITY()
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_TYPES_EDIT_PRODUCT_TYPE]
+	@id INT,
+	@name NVARCHAR(50),
+	@is_active BIT,
+	@edited_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[PRODUCT_TYPES] WHERE [id] = @id  AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[PRODUCT_TYPES]
+			SET 
+				[name] = @name,
+				[is_active] = @is_active,
+				[edited_by] = @edited_by,
+				[edited_at] = GETDATE()
+			WHERE [id] = @id AND [is_deleted] = 0
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_TYPES_DELETE_PRODUCT_TYPE]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[PRODUCT_TYPES] WHERE [id] = @id AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[PRODUCT_TYPES]
+			SET 
+				[is_deleted] = 1,
+				[is_active] = 0
+			WHERE [id] = @id
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCTS_GET_PRODUCT]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT *
+		FROM [dbo].[PRODUCTS]
+		WHERE [id] = @id AND [is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCTS_GET_PRODUCTS]
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT
+			products.[id],
+    		products.[name],
+    		products.[product_group_id],
+    		productGroups.[name] product_group_name,
+    		products.[product_type_id],
+    		productTypes.[name] product_type_name,
+			products.[client_id],
+			products.[description],
+			products.[main_safe_quantity],
+    		products.[daily_safe_quantity],
+    		products.[is_active],
+    		products.[is_deleted],
+    		products.[created_at],
+    		products.[edited_at],
+    		products.[created_by],
+    		products.[edited_by],
+			users1.[name] created_by_name,
+			users2.[name] edited_by_name
+		FROM [dbo].[PRODUCTS] products
+		LEFT JOIN [dbo].[PRODUCT_GROUPS] productGroups
+			ON products.[product_group_id] = productGroups.[id]
+		LEFT JOIN [dbo].[PRODUCT_TYPES] productTypes
+			ON products.[product_type_id] = productTypes.[id]
+		LEFT JOIN [dbo].[USERS] users1
+			ON products.[created_by] = users1.[username]
+		LEFT JOIN [dbo].[USERS] users2
+			ON products.[edited_by] = users2.[username]
+		WHERE products.[is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCTS_ADD_PRODUCT]
+	@name NVARCHAR(50),
+	@product_group_id INT,
+	@product_type_id INT,
+	@client_id NVARCHAR(100) = NULL,
+	@description NVARCHAR(500) = NULL,
+	@created_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		BEGIN
+			INSERT INTO [dbo].[PRODUCTS]
+			(
+				[name],
+				[product_group_id],
+				[product_type_id],
+				[client_id],
+				[description],
+				[is_active],
+				[is_deleted],
+				[created_by],
+				[created_at]
+			)
+			VALUES
+			(
+				@name,
+				@product_group_id,
+				@product_type_id,
+				@client_id,
+				@description,
+				1,
+				0,
+				@created_by,
+			    GETDATE()
+			)
+			RETURN SCOPE_IDENTITY()
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCTS_EDIT_PRODUCT]
+	@id INT,
+	@name NVARCHAR(50),
+	@product_group_id INT,
+	@product_type_id INT,
+	@client_id NVARCHAR(100) = NULL,
+	@description NVARCHAR(500) = NULL,
+	@created_by  NVARCHAR(50) = NULL,
+	@is_active BIT,
+	@edited_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[PRODUCTS] WHERE [id] = @id  AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[PRODUCTS]
+			SET 
+				[name] = @name,
+				[product_group_id] = @product_group_id,
+				[product_type_id] = @product_type_id,
+				[client_id] = @client_id,
+				[description] = @description,
+				[is_active] = @is_active,
+				[edited_by] = @edited_by,
+				[edited_at] = GETDATE()
+			WHERE [id] = @id AND [is_deleted] = 0
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCTS_DELETE_PRODUCT]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[PRODUCTS] WHERE [id] = @id AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[PRODUCTS]
+			SET 
+				[is_deleted] = 1,
+				[is_active] = 0
+			WHERE [id] = @id
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLE_TYPES_GET_CONSUMABLE_TYPE]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT *
+		FROM [dbo].[CONSUMABLE_TYPES]
+		WHERE [id] = @id AND [is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLE_TYPES_GET_CONSUMABLE_TYPES]
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT
+			consumableTypes.[id],
+    		consumableTypes.[name],
+    		consumableTypes.[is_active],
+    		consumableTypes.[is_deleted],
+    		consumableTypes.[created_at],
+    		consumableTypes.[edited_at],
+    		consumableTypes.[created_by],
+    		consumableTypes.[edited_by],
+			users1.[name] created_by_name,
+			users2.[name] edited_by_name
+		FROM [dbo].[CONSUMABLE_TYPES] consumableTypes
+		LEFT JOIN [dbo].[USERS] users1
+			ON consumableTypes.[created_by] = users1.[username]
+		LEFT JOIN [dbo].[USERS] users2
+			ON consumableTypes.[edited_by] = users2.[username]
+		WHERE consumableTypes.[is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLE_TYPES_ADD_CONSUMABLE_TYPE]
+	@name NVARCHAR(50),
+	@created_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		BEGIN
+			INSERT INTO [dbo].[CONSUMABLE_TYPES]
+			(
+				[name],
+				[is_active],
+				[is_deleted],
+				[created_by],
+				[created_at]
+			)
+			VALUES
+			(
+				@name,
+				1,
+				0,
+				@created_by,
+			    GETDATE()
+			)
+			RETURN SCOPE_IDENTITY()
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLE_TYPES_EDIT_CONSUMABLE_TYPE]
+	@id INT,
+	@name NVARCHAR(50),
+	@is_active BIT,
+	@edited_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[CONSUMABLE_TYPES] WHERE [id] = @id  AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[CONSUMABLE_TYPES]
+			SET 
+				[name] = @name,
+				[is_active] = @is_active,
+				[edited_by] = @edited_by,
+				[edited_at] = GETDATE()
+			WHERE [id] = @id AND [is_deleted] = 0
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLE_TYPES_DELETE_CONSUMABLE_TYPE]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[CONSUMABLE_TYPES] WHERE [id] = @id AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[CONSUMABLE_TYPES]
+			SET 
+				[is_deleted] = 1,
+				[is_active] = 0
+			WHERE [id] = @id
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+
+GO
+CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_GET_CONSUMABLE]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT *
+		FROM [dbo].[CONSUMABLES]
+		WHERE [id] = @id AND [is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_GET_CONSUMABLES]
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT
+			consumables.[id],
+    		consumables.[name],
+    		consumables.[consumable_type_id],
+    		consumableTypes.[name] consumable_type_name,
+			consumables.[multiplier],
+			consumables.[stock_quantity],
+    		consumables.[is_active],
+    		consumables.[is_deleted],
+    		consumables.[created_at],
+    		consumables.[edited_at],
+    		consumables.[created_by],
+    		consumables.[edited_by],
+			users1.[name] created_by_name,
+			users2.[name] edited_by_name
+		FROM [dbo].[CONSUMABLES] consumables
+		LEFT JOIN [dbo].[CONSUMABLE_TYPES] consumableTypes
+			ON consumables.[CONSUMABLE_type_id] = consumableTypes.[id]
+		LEFT JOIN [dbo].[USERS] users1
+			ON consumables.[created_by] = users1.[username]
+		LEFT JOIN [dbo].[USERS] users2
+			ON consumables.[edited_by] = users2.[username]
+		WHERE consumables.[is_deleted] = 0
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_ADD_CONSUMABLE]
+	@name NVARCHAR(50),
+	@consumable_type_id INT,
+	@multiplier FLOAT = NULL,
+	@description NVARCHAR(500) = NULL,
+	@created_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		BEGIN
+			INSERT INTO [dbo].[CONSUMABLES]
+			(
+				[name],
+				[consumable_type_id],
+				[multiplier],
+				[description],
+				[is_active],
+				[is_deleted],
+				[created_by],
+				[created_at]
+			)
+			VALUES
+			(
+				@name,
+				@consumable_type_id,
+				@multiplier,
+				@description,
+				1,
+				0,
+				@created_by,
+			    GETDATE()
+			)
+			RETURN SCOPE_IDENTITY()
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_EDIT_CONSUMABLE]
+	@id INT,
+	@name NVARCHAR(50),
+	@consumable_type_id INT,
+	@multiplier FLOAT = NULL,
+	@description NVARCHAR(500) = NULL,
+	@created_by  NVARCHAR(50) = NULL,
+	@is_active BIT,
+	@edited_by  NVARCHAR(50) = NULL
+	AS
+	BEGIN
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[CONSUMABLES] WHERE [id] = @id  AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[CONSUMABLES]
+			SET 
+				[name] = @name,
+				[consumable_type_id] = @consumable_type_id,
+				[multiplier] = @multiplier,
+				[description] = @description,
+				[is_active] = @is_active,
+				[edited_by] = @edited_by,
+				[edited_at] = GETDATE()
+			WHERE [id] = @id AND [is_deleted] = 0
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_DELETE_CONSUMABLE]
+	@id INT
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		IF EXISTS (SELECT [id] FROM [dbo].[CONSUMABLES] WHERE [id] = @id AND [is_deleted] = 0)
+		BEGIN
+			UPDATE [dbo].[CONSUMABLES]
+			SET 
+				[is_deleted] = 1,
+				[is_active] = 0
+			WHERE [id] = @id
+			RETURN @id
+		END
+		ELSE
+		BEGIN
+			RETURN -1
+		END
 	END;
 GO

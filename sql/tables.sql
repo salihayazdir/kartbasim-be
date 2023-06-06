@@ -95,7 +95,8 @@ CREATE TABLE [dbo].[BANKS](
 );
  
 CREATE UNIQUE INDEX BANKS_NAME_UNIQUE ON
-    [dbo].[BANKS] ([name]);
+    [dbo].[BANKS] ([name])
+    WHERE [is_deleted] = 0;
 GO
 
 CREATE TABLE [dbo].[PRODUCT_TYPES](
@@ -116,13 +117,13 @@ CREATE TABLE [dbo].[PRODUCT_TYPES](
 CREATE TABLE [dbo].[PRODUCT_GROUPS](
 	[id] INT IDENTITY(1, 1) PRIMARY KEY,
 	[name] NVARCHAR (50) NOT NULL,
-    [is_active] BIT NOT NULL DEFAULT 1,
-    [is_deleted] BIT NOT NULL DEFAULT 0,
 	[bank_id] INT NOT NULL,
         CONSTRAINT FK_PRODUCT_GROUPS_BANKS FOREIGN KEY ([bank_id]) 
         REFERENCES [dbo].[BANKS]([id]) ,
 	[client_id] NVARCHAR(100) NULL,
 	[description] NVARCHAR(500) NULL,
+    [is_active] BIT NOT NULL DEFAULT 1,
+    [is_deleted] BIT NOT NULL DEFAULT 0,
 	[created_at] DATETIME NOT NULL,
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
@@ -136,8 +137,6 @@ CREATE TABLE [dbo].[PRODUCT_GROUPS](
 CREATE TABLE [dbo].[PRODUCTS](
 	[id] INT IDENTITY(1, 1) PRIMARY KEY,
 	[name] NVARCHAR (50) NOT NULL,
-    [is_active] BIT NOT NULL DEFAULT 1,
-    [is_deleted] BIT NOT NULL DEFAULT 0,
     [product_type_id] INT NOT NULL,
         CONSTRAINT FK_PRODUCTS_PRODUCT_TYPES FOREIGN KEY ([product_type_id]) 
         REFERENCES [dbo].[PRODUCT_TYPES]([id]) ,
@@ -146,8 +145,10 @@ CREATE TABLE [dbo].[PRODUCTS](
         REFERENCES [dbo].[PRODUCT_GROUPS]([id]) ,
 	[client_id] NVARCHAR(100) NULL,
 	[description] NVARCHAR(500) NULL,
-    [main_safe_quantity] INT NOT NULL,
-    [daily_safe_quantity] INT NOT NULL,
+    [main_safe_quantity] INT NOT NULL DEFAULT 0,
+    [daily_safe_quantity] INT NOT NULL DEFAULT 0,
+    [is_active] BIT NOT NULL DEFAULT 1,
+    [is_deleted] BIT NOT NULL DEFAULT 0,
 	[created_at] DATETIME NOT NULL,
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
@@ -196,12 +197,14 @@ CREATE TABLE [dbo].[CONSUMABLE_TYPES](
 CREATE TABLE [dbo].[CONSUMABLES](
 	[id] INT IDENTITY(1, 1) PRIMARY KEY,
 	[name] NVARCHAR (50) NOT NULL,
-    [is_active] BIT NOT NULL DEFAULT 1,
-    [is_deleted] BIT NOT NULL DEFAULT 0,
+    [multiplier] FLOAT NOT NULL,
+    [stock_quantity] INT NOT NULL DEFAULT 0,
+    [description] NVARCHAR (500) NULL,
     [consumable_type_id] INT NOT NULL,
         CONSTRAINT FK_CONSUMABLES_CONSUMABLE_TYPES FOREIGN KEY ([consumable_type_id]) 
         REFERENCES [dbo].[CONSUMABLE_TYPES]([id]) ,
-    [multiplier] FLOAT NOT NULL,
+    [is_active] BIT NOT NULL DEFAULT 1,
+    [is_deleted] BIT NOT NULL DEFAULT 0,
 	[created_at] DATETIME NOT NULL,
 	[edited_at] DATETIME NULL,
     [created_by] NVARCHAR(50) NULL,
@@ -324,10 +327,12 @@ CREATE TABLE [dbo].[PRINTERS](
 )
  
 CREATE UNIQUE INDEX PRINTERS_NAME_UNIQUE ON
-    [dbo].[PRINTERS] ([name]);
+    [dbo].[PRINTERS] ([name])
+    WHERE [is_deleted] = 0;
 GO
 CREATE UNIQUE INDEX PRINTERS_SERIAL_UNIQUE ON
-    [dbo].[PRINTERS] ([serial_no]);
+    [dbo].[PRINTERS] ([serial_no])
+    WHERE [is_deleted] = 0;
 GO
 
 CREATE TABLE [dbo].[SHIFT_REPORTS](

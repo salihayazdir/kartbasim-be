@@ -44,11 +44,13 @@ export async function createSessionController(req: Request, res: Response) {
 		return res
 			.cookie('Authorization', `Bearer ${serviceResult.accessToken}`, {
 				secure: false,
-				httpOnly: true,
+				// httpOnly: true,
+				maxAge: 1000 * 60 * 30,
 			})
 			.cookie('x-refresh', `${serviceResult.refreshToken}`, {
 				secure: false,
-				httpOnly: true,
+				// httpOnly: true,
+				maxAge: 1000 * 60 * 60 * 24 * 365,
 			})
 			.send(responseObject);
 	} catch (err: any) {
@@ -87,7 +89,8 @@ export async function refreshSessionController(req: Request, res: Response) {
 		return res
 			.cookie('Authorization', `Bearer ${serviceResult}`, {
 				secure: false,
-				httpOnly: true,
+				// httpOnly: true,
+				maxAge: 1000 * 60 * 30,
 			})
 			.send(responseObject);
 	} catch (err: any) {

@@ -1,27 +1,21 @@
 import { Request, Response } from 'express';
 import logger from '../utils/logger';
-import {
-	addPrinterService,
-	getPrinterService,
-	getPrintersService,
-	editPrinterService,
-	deletePrinterService,
-} from '../services/printers.service';
-import {
-	GetPrintersInput,
-	GetPrinterInput,
-	AddPrinterInput,
-	EditPrinterInput,
-	DeletePrinterInput,
-} from '../schemas/printers.schema';
-import { Printer, ResponseObject } from '../data/models';
 
-export async function getPrintersController(req: Request<GetPrintersInput['body']>, res: Response) {
+import { Consumable, ResponseObject } from '../data/models';
+import {
+	getConsumableService,
+	getConsumablesService,
+	addConsumableService,
+	editConsumableService,
+	deleteConsumableService,
+} from '../services/consumables.service';
+
+export async function getConsumablesController(req: Request, res: Response) {
 	try {
-		const printersRecordset = await getPrintersService();
-		const responseObject: ResponseObject<Printer[]> = {
+		const recordset = await getConsumablesService();
+		const responseObject: ResponseObject<Consumable[]> = {
 			error: false,
-			data: printersRecordset,
+			data: recordset,
 		};
 		return res.send(responseObject);
 	} catch (err: any) {
@@ -34,12 +28,12 @@ export async function getPrintersController(req: Request<GetPrintersInput['body'
 	}
 }
 
-export async function getPrinterController(req: Request<GetPrinterInput['params']>, res: Response) {
+export async function getConsumableController(req: Request, res: Response) {
 	try {
 		const idFromRequest: string = req.params.id;
 		const idNumberFromRequest: number = parseInt(idFromRequest);
-		const serviceResult = await getPrinterService(idNumberFromRequest);
-		const responseObject: ResponseObject<Printer[]> = {
+		const serviceResult = await getConsumableService(idNumberFromRequest);
+		const responseObject: ResponseObject<Consumable[]> = {
 			error: false,
 			data: serviceResult,
 		};
@@ -54,18 +48,17 @@ export async function getPrinterController(req: Request<GetPrinterInput['params'
 	}
 }
 
-export async function addPrinterController(req: Request<AddPrinterInput['body']>, res: Response) {
+export async function addConsumableController(req: Request, res: Response) {
 	try {
-		const { name, model, serial_no, description } = req.body;
-		const printerToAdd: Omit<Printer, 'id' | 'is_deleted'> = {
+		const { name, consumable_type_id, multiplier } = req.body;
+		const consumableToAdd: Omit<Consumable, 'id' | 'is_deleted'> = {
 			name,
-			model,
-			serial_no,
-			description,
+			consumable_type_id,
+			multiplier,
 			is_active: true,
 		};
 
-		const serviceResult = await addPrinterService(printerToAdd);
+		const serviceResult = await addConsumableService(consumableToAdd);
 		const responseObject: ResponseObject<{ insertedId: number }> = {
 			error: false,
 			data: {
@@ -83,26 +76,22 @@ export async function addPrinterController(req: Request<AddPrinterInput['body']>
 	}
 }
 
-export async function editPrinterController(
-	req: Request<EditPrinterInput['params'], EditPrinterInput['body']>,
-	res: Response
-) {
+export async function editConsumableController(req: Request, res: Response) {
 	try {
-		const { name, is_active, model, serial_no, description } = req.body;
+		const { name, consumable_type_id, multiplier, is_active } = req.body;
 		const { id } = req.params;
 		const parsedId = parseInt(id);
 
-		const printerToEdit: Printer = {
+		const consumableToEdit: Consumable = {
 			id: parsedId,
-			name: name,
-			is_active: is_active,
-			model: model,
-			serial_no: serial_no,
-			description: description,
+			name,
+			consumable_type_id,
+			multiplier,
+			is_active,
 			is_deleted: false,
 		};
 
-		const serviceResult = await editPrinterService(printerToEdit);
+		const serviceResult = await editConsumableService(consumableToEdit);
 
 		const responseObject: ResponseObject<{ editedId: number }> = {
 			error: false,
@@ -122,15 +111,12 @@ export async function editPrinterController(
 	}
 }
 
-export async function deletePrinterController(
-	req: Request<DeletePrinterInput['params']>,
-	res: Response
-) {
+export async function deleteConsumableController(req: Request, res: Response) {
 	try {
 		const idFromRequest: string = req.params.id;
 		const idNumberFromRequest: number = parseInt(idFromRequest);
 
-		const serviceResult = await deletePrinterService(idNumberFromRequest);
+		const serviceResult = await deleteConsumableService(idNumberFromRequest);
 		const responseObject: ResponseObject<{ deletedId: number }> = {
 			error: false,
 			data: {

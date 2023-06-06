@@ -1,27 +1,21 @@
 import { Request, Response } from 'express';
 import logger from '../utils/logger';
-import {
-	addPrinterService,
-	getPrinterService,
-	getPrintersService,
-	editPrinterService,
-	deletePrinterService,
-} from '../services/printers.service';
-import {
-	GetPrintersInput,
-	GetPrinterInput,
-	AddPrinterInput,
-	EditPrinterInput,
-	DeletePrinterInput,
-} from '../schemas/printers.schema';
-import { Printer, ResponseObject } from '../data/models';
 
-export async function getPrintersController(req: Request<GetPrintersInput['body']>, res: Response) {
+import { ProductGroup, ResponseObject } from '../data/models';
+import {
+	getProductGroupService,
+	getProductGroupsService,
+	addProductGroupService,
+	editProductGroupService,
+	deleteProductGroupService,
+} from '../services/product-groups.service';
+
+export async function getProductGroupsController(req: Request, res: Response) {
 	try {
-		const printersRecordset = await getPrintersService();
-		const responseObject: ResponseObject<Printer[]> = {
+		const recordset = await getProductGroupsService();
+		const responseObject: ResponseObject<ProductGroup[]> = {
 			error: false,
-			data: printersRecordset,
+			data: recordset,
 		};
 		return res.send(responseObject);
 	} catch (err: any) {
@@ -34,12 +28,12 @@ export async function getPrintersController(req: Request<GetPrintersInput['body'
 	}
 }
 
-export async function getPrinterController(req: Request<GetPrinterInput['params']>, res: Response) {
+export async function getProductGroupController(req: Request, res: Response) {
 	try {
 		const idFromRequest: string = req.params.id;
 		const idNumberFromRequest: number = parseInt(idFromRequest);
-		const serviceResult = await getPrinterService(idNumberFromRequest);
-		const responseObject: ResponseObject<Printer[]> = {
+		const serviceResult = await getProductGroupService(idNumberFromRequest);
+		const responseObject: ResponseObject<ProductGroup[]> = {
 			error: false,
 			data: serviceResult,
 		};
@@ -54,18 +48,18 @@ export async function getPrinterController(req: Request<GetPrinterInput['params'
 	}
 }
 
-export async function addPrinterController(req: Request<AddPrinterInput['body']>, res: Response) {
+export async function addProductGroupController(req: Request, res: Response) {
 	try {
-		const { name, model, serial_no, description } = req.body;
-		const printerToAdd: Omit<Printer, 'id' | 'is_deleted'> = {
+		const { name, bank_id, client_id, description } = req.body;
+		const productGroupToAdd: Omit<ProductGroup, 'id' | 'is_deleted'> = {
 			name,
-			model,
-			serial_no,
+			bank_id,
+			client_id,
 			description,
 			is_active: true,
 		};
 
-		const serviceResult = await addPrinterService(printerToAdd);
+		const serviceResult = await addProductGroupService(productGroupToAdd);
 		const responseObject: ResponseObject<{ insertedId: number }> = {
 			error: false,
 			data: {
@@ -83,26 +77,23 @@ export async function addPrinterController(req: Request<AddPrinterInput['body']>
 	}
 }
 
-export async function editPrinterController(
-	req: Request<EditPrinterInput['params'], EditPrinterInput['body']>,
-	res: Response
-) {
+export async function editProductGroupController(req: Request, res: Response) {
 	try {
-		const { name, is_active, model, serial_no, description } = req.body;
+		const { name, is_active, bank_id, client_id, description } = req.body;
 		const { id } = req.params;
 		const parsedId = parseInt(id);
 
-		const printerToEdit: Printer = {
+		const productGroupToEdit: ProductGroup = {
 			id: parsedId,
-			name: name,
-			is_active: is_active,
-			model: model,
-			serial_no: serial_no,
-			description: description,
+			name,
+			is_active,
+			bank_id,
+			client_id,
+			description,
 			is_deleted: false,
 		};
 
-		const serviceResult = await editPrinterService(printerToEdit);
+		const serviceResult = await editProductGroupService(productGroupToEdit);
 
 		const responseObject: ResponseObject<{ editedId: number }> = {
 			error: false,
@@ -122,15 +113,12 @@ export async function editPrinterController(
 	}
 }
 
-export async function deletePrinterController(
-	req: Request<DeletePrinterInput['params']>,
-	res: Response
-) {
+export async function deleteProductGroupController(req: Request, res: Response) {
 	try {
 		const idFromRequest: string = req.params.id;
 		const idNumberFromRequest: number = parseInt(idFromRequest);
 
-		const serviceResult = await deletePrinterService(idNumberFromRequest);
+		const serviceResult = await deleteProductGroupService(idNumberFromRequest);
 		const responseObject: ResponseObject<{ deletedId: number }> = {
 			error: false,
 			data: {
