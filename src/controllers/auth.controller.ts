@@ -4,6 +4,7 @@ import { ErrorDetails, ResponseObject } from '../data/models';
 import {
 	createSessionService,
 	loginService,
+	logoutService,
 	refreshSessionService,
 } from '../services/auth.service';
 import { get } from 'lodash';
@@ -105,25 +106,12 @@ export async function refreshSessionController(req: Request, res: Response) {
 
 export async function logoutController(req: Request, res: Response) {
 	try {
-		const refreshToken = get(req, 'headers.x-refresh')?.toString() || '';
-		const decodedRefreshToken = verifyJwt<{
-			sessionId: number;
-			iat: number;
-		}>(refreshToken, 'refreshTokenPublicKey');
+		const username = res.locals.user.username;
+		if (username) logoutService(username);
 
-		if (!decodedRefreshToken) {
-			const errorDetails: ErrorDetails = {
-				code: 'TOKEN',
-				message: 'Refresh token doğrulanamadı.',
-			};
-			throw errorDetails;
-		}
-
-		const serviceResult = await refreshSessionService(decodedRefreshToken);
-
-		const responseObject: ResponseObject<{ accessToken: string }> = {
+		const responseObject: ResponseObject<string> = {
 			error: false,
-			data: { accessToken: serviceResult },
+			data: 'Logout başarılı.',
 		};
 
 		return res.clearCookie('Authorization').clearCookie('x-refresh').send(responseObject);

@@ -205,3 +205,23 @@ export async function refreshSessionService(decodedRefreshToken: {
 
 	return accessToken;
 }
+
+export async function logoutService(username: string) {
+	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
+	const endSessionResult: IProcedureResult<any> = await (await pool)
+		.request()
+		.input('username', sql.NVarChar, username)
+		.execute('dbo.AUTH_SESSION_END_SESSION');
+	logger.info(endSessionResult);
+	const { returnValue } = endSessionResult;
+
+	if (returnValue < 1) {
+		const errorDetails: ErrorDetails = {
+			code: 'SESSION',
+			message: 'Geçerli session bulunamadı.',
+		};
+		logger.error(errorDetails);
+	}
+
+	return returnValue;
+}

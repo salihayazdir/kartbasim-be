@@ -18,7 +18,7 @@ export async function getConsumablesService() {
 	if (!recordset) {
 		const errorDetails: ErrorDetails = {
 			code: 'NOT_FOUND',
-			message: 'Ürünler bulunamadi.',
+			message: 'Matbuatler bulunamadi.',
 		};
 		throw errorDetails;
 	}
@@ -44,7 +44,7 @@ export async function getConsumableService(id: number) {
 	if (recordset.length !== 1) {
 		const errorDetails: ErrorDetails = {
 			code: 'NOT_FOUND',
-			message: 'Ürün bulunamadı.',
+			message: 'Matbuat bulunamadı.',
 		};
 		throw errorDetails;
 	}
@@ -76,7 +76,7 @@ export async function addConsumableService(
 	if (!(returnValue > -1)) {
 		const errorDetails: ErrorDetails = {
 			code: 'NOT_FOUND',
-			message: 'Ürün eklenemedi.',
+			message: 'Matbuat eklenemedi.',
 		};
 		throw errorDetails;
 	}
@@ -102,7 +102,7 @@ export async function editConsumableService(Consumable: Consumable) {
 	if (!(returnValue > -1)) {
 		const errorDetails: ErrorDetails = {
 			code: 'NOT_FOUND',
-			message: 'Ürün bulunamadı.',
+			message: 'Matbuat bulunamadı.',
 		};
 		throw errorDetails;
 	}
@@ -122,7 +122,7 @@ export async function deleteConsumableService(id: number) {
 	if (!(returnValue > -1)) {
 		const errorDetails: ErrorDetails = {
 			code: 'NOT_FOUND',
-			message: 'Ürün silinemedi.',
+			message: 'Matbuat silinemedi.',
 		};
 		throw errorDetails;
 	}
