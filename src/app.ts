@@ -14,7 +14,6 @@ import productTypesRouter from './routes/product-types.routes';
 import productsRouter from './routes/products.routes';
 import consumableTypesRouter from './routes/consumable-types.routes';
 import consumablesRouter from './routes/consumables.routes';
-import shiftsRouter from './routes/shifts.routes';
 import usersRouter from './routes/users.routes';
 import authRouter from './routes/auth.routes';
 
@@ -41,7 +40,6 @@ app.use('/api/product-types', productTypesRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/consumable-types', consumableTypesRouter);
 app.use('/api/consumables', consumablesRouter);
-app.use('/api/shifts', shiftsRouter);
 app.use('/api/users', usersRouter);
 
 app.use(errorHandler);

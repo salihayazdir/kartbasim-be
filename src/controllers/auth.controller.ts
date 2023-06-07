@@ -46,7 +46,7 @@ export async function createSessionController(req: Request, res: Response) {
 			.cookie('Authorization', `Bearer ${serviceResult.accessToken}`, {
 				secure: false,
 				// httpOnly: true,
-				maxAge: 1000 * 60 * 30,
+				maxAge: 1000 * 60 * 60 * 12,
 			})
 			.cookie('x-refresh', `${serviceResult.refreshToken}`, {
 				secure: false,
@@ -91,7 +91,7 @@ export async function refreshSessionController(req: Request, res: Response) {
 			.cookie('Authorization', `Bearer ${serviceResult}`, {
 				secure: false,
 				// httpOnly: true,
-				maxAge: 1000 * 60 * 30,
+				maxAge: 1000 * 60 * 60 * 12,
 			})
 			.send(responseObject);
 	} catch (err: any) {

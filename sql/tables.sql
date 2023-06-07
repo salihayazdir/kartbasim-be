@@ -197,7 +197,6 @@ CREATE TABLE [dbo].[CONSUMABLE_TYPES](
 CREATE TABLE [dbo].[CONSUMABLES](
 	[id] INT IDENTITY(1, 1) PRIMARY KEY,
 	[name] NVARCHAR (50) NOT NULL,
-    [multiplier] FLOAT NOT NULL,
     [stock_quantity] INT NOT NULL DEFAULT 0,
     [description] NVARCHAR (500) NULL,
     [consumable_type_id] INT NOT NULL,

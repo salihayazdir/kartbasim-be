@@ -134,7 +134,7 @@ export async function createSessionService(
 
 	const user: User = getUserRecordset[0];
 
-	const accessToken = signJwt(user, 'accessTokenPrivateKey', { expiresIn: '30m' });
+	const accessToken = signJwt(user, 'accessTokenPrivateKey', { expiresIn: '12h' });
 
 	const addSessionResult: IProcedureResult<User> = await (await pool)
 		.request()
@@ -201,7 +201,7 @@ export async function refreshSessionService(decodedRefreshToken: {
 
 	const user: User = getUserRecordset[0];
 
-	const accessToken = signJwt(user, 'accessTokenPrivateKey', { expiresIn: '30m' });
+	const accessToken = signJwt(user, 'accessTokenPrivateKey', { expiresIn: '12h' });
 
 	return accessToken;
 }

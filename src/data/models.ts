@@ -96,7 +96,8 @@ export type Consumable = {
 	is_active: boolean;
 	is_deleted: boolean;
 	consumable_type_id: number;
-	multiplier: number;
+	stock_quantity: number;
+	description?: string;
 	created_at?: string;
 	created_by?: string;
 	edited_at?: string;

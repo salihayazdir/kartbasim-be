@@ -60,13 +60,14 @@ export async function getProductGroupService(id: number) {
 export async function addProductGroupService(
 	productGroup: Omit<ProductGroup, 'id' | 'is_deleted'>
 ): Promise<number> {
-	const { name, bank_id, description } = productGroup;
+	const { name, bank_id, client_id, description } = productGroup;
 
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
 	const result: IProcedureResult<ProductGroup> = await (await pool)
 		.request()
 		.input('name', sql.NVarChar, name)
 		.input('bank_id', sql.Int, bank_id)
+		.input('client_id', sql.NVarChar, client_id)
 		.input('description', sql.NVarChar, description)
 		.execute('dbo.PRODUCT_GROUPS_ADD_PRODUCT_GROUP');
 	logger.info(result);
@@ -85,7 +86,7 @@ export async function addProductGroupService(
 }
 
 export async function editProductGroupService(productGroup: ProductGroup) {
-	const { id, name, bank_id, description, is_active } = productGroup;
+	const { id, name, bank_id, client_id, description, is_active } = productGroup;
 
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
 	const result: IProcedureResult<ProductGroup> = await (await pool)
@@ -93,6 +94,7 @@ export async function editProductGroupService(productGroup: ProductGroup) {
 		.input('id', sql.Int, id)
 		.input('name', sql.NVarChar, name)
 		.input('bank_id', sql.Int, bank_id)
+		.input('client_id', sql.NVarChar, client_id)
 		.input('description', sql.NVarChar, description)
 		.input('is_active', sql.Bit, is_active)
 		.execute('dbo.PRODUCT_GROUPS_EDIT_PRODUCT_GROUP');
