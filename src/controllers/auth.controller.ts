@@ -27,7 +27,7 @@ export async function loginController(req: Request, res: Response) {
 			error: err,
 			data: null,
 		};
-		return res.status(401).send(responseObject);
+		return res.status(400).send(responseObject);
 	}
 }
 
@@ -60,7 +60,7 @@ export async function createSessionController(req: Request, res: Response) {
 			error: err,
 			data: null,
 		};
-		return res.status(401).send(responseObject);
+		return res.status(400).send(responseObject);
 	}
 }
 

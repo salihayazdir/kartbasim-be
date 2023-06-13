@@ -50,11 +50,10 @@ export async function getConsumableController(req: Request, res: Response) {
 
 export async function addConsumableController(req: Request, res: Response) {
 	try {
-		const { name, consumable_type_id, multiplier } = req.body;
-		const consumableToAdd: Omit<Consumable, 'id' | 'is_deleted'> = {
+		const { name, consumable_type_id } = req.body;
+		const consumableToAdd: Omit<Consumable, 'id' | 'stock_quantity' | 'is_deleted'> = {
 			name,
 			consumable_type_id,
-			multiplier,
 			is_active: true,
 		};
 
@@ -78,15 +77,14 @@ export async function addConsumableController(req: Request, res: Response) {
 
 export async function editConsumableController(req: Request, res: Response) {
 	try {
-		const { name, consumable_type_id, multiplier, is_active } = req.body;
+		const { name, consumable_type_id, is_active } = req.body;
 		const { id } = req.params;
 		const parsedId = parseInt(id);
 
-		const consumableToEdit: Consumable = {
+		const consumableToEdit: Omit<Consumable, 'stock_quantity'> = {
 			id: parsedId,
 			name,
 			consumable_type_id,
-			multiplier,
 			is_active,
 			is_deleted: false,
 		};

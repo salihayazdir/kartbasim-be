@@ -60,10 +60,10 @@ INSERT INTO [dbo].[CONSUMABLE_TYPES]
     ( 'İnsert', GETDATE() , 'username5')
 
 INSERT INTO [dbo].[CONSUMABLES] 
-    ([name], [consumable_type_id], [multiplier], [created_at], [created_by] ) VALUES
-    ( 'Zarf MC BSK COMBO TİCARİ KURUMSAL', 1, 1, GETDATE() , 'username5'),
-    ( 'Zarf VC Bkkrt Prestij  Başak Combo', 1, 1, GETDATE() , 'username5'),
-    ( 'Zarf MC Başak TİCARİ TOBB Combo', 1, 1, GETDATE() , 'username5')
+    ([name], [consumable_type_id], [created_at], [created_by] ) VALUES
+    ( 'Zarf MC BSK COMBO TİCARİ KURUMSAL', 1, GETDATE() , 'username5'),
+    ( 'Zarf VC Bkkrt Prestij  Başak Combo', 1, GETDATE() , 'username5'),
+    ( 'Zarf MC Başak TİCARİ TOBB Combo', 1, GETDATE() , 'username5')
 
 INSERT INTO [dbo].[CONSUMABLE_PRODUCT_RECORDS] 
     ([consumable_id], [product_id] ) VALUES

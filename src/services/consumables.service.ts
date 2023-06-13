@@ -59,16 +59,15 @@ export async function getConsumableService(id: number) {
 }
 
 export async function addConsumableService(
-	Consumable: Omit<Consumable, 'id' | 'is_deleted'>
+	Consumable: Omit<Consumable, 'id' | 'stock_quantity' | 'is_deleted'>
 ): Promise<number> {
-	const { name, consumable_type_id, multiplier } = Consumable;
+	const { name, consumable_type_id } = Consumable;
 
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
 	const result: IProcedureResult<Consumable> = await (await pool)
 		.request()
 		.input('name', sql.NVarChar, name)
 		.input('consumable_type_id', sql.Int, consumable_type_id)
-		.input('multiplier', sql.Float, multiplier)
 		.execute('dbo.CONSUMABLES_ADD_CONSUMABLE');
 	logger.info(result);
 
@@ -84,8 +83,8 @@ export async function addConsumableService(
 	return result.returnValue;
 }
 
-export async function editConsumableService(Consumable: Consumable) {
-	const { id, name, consumable_type_id, multiplier, is_active } = Consumable;
+export async function editConsumableService(Consumable: Omit<Consumable, 'stock_quantity'>) {
+	const { id, name, consumable_type_id, is_active } = Consumable;
 
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
 	const result: IProcedureResult<Consumable> = await (await pool)
@@ -94,7 +93,6 @@ export async function editConsumableService(Consumable: Consumable) {
 		.input('name', sql.NVarChar, name)
 		.input('is_active', sql.Bit, is_active)
 		.input('consumable_type_id', sql.Int, consumable_type_id)
-		.input('multiplier', sql.Float, multiplier)
 		.execute('dbo.CONSUMABLES_EDIT_CONSUMABLE');
 	logger.info(result);
 

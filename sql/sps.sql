@@ -980,7 +980,6 @@ CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_GET_CONSUMABLES]
     		consumables.[name],
     		consumables.[consumable_type_id],
     		consumableTypes.[name] consumable_type_name,
-			consumables.[multiplier],
 			consumables.[stock_quantity],
     		consumables.[is_active],
     		consumables.[is_deleted],
@@ -1004,7 +1003,6 @@ GO
 CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_ADD_CONSUMABLE]
 	@name NVARCHAR(50),
 	@consumable_type_id INT,
-	@multiplier FLOAT = NULL,
 	@description NVARCHAR(500) = NULL,
 	@created_by  NVARCHAR(50) = NULL
 	AS
@@ -1015,7 +1013,6 @@ CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_ADD_CONSUMABLE]
 			(
 				[name],
 				[consumable_type_id],
-				[multiplier],
 				[description],
 				[is_active],
 				[is_deleted],
@@ -1026,7 +1023,6 @@ CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_ADD_CONSUMABLE]
 			(
 				@name,
 				@consumable_type_id,
-				@multiplier,
 				@description,
 				1,
 				0,
@@ -1042,7 +1038,6 @@ CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_EDIT_CONSUMABLE]
 	@id INT,
 	@name NVARCHAR(50),
 	@consumable_type_id INT,
-	@multiplier FLOAT = NULL,
 	@description NVARCHAR(500) = NULL,
 	@created_by  NVARCHAR(50) = NULL,
 	@is_active BIT,
@@ -1056,7 +1051,6 @@ CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_EDIT_CONSUMABLE]
 			SET 
 				[name] = @name,
 				[consumable_type_id] = @consumable_type_id,
-				[multiplier] = @multiplier,
 				[description] = @description,
 				[is_active] = @is_active,
 				[edited_by] = @edited_by,
