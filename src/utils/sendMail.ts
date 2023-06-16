@@ -3,7 +3,7 @@ import config from 'config';
 import logger from '../utils/logger';
 import { Transporter } from 'nodemailer';
 
-const smtpConfig = config.get<{ host: string }>('dev.smtp');
+const smtpConfig = config.get<{ host: string; port: number }>('smtp');
 
 export default async function sendMail(
 	mailTo: string,
@@ -16,7 +16,7 @@ export default async function sendMail(
 				host: smtpConfig.host,
 				pool: true,
 				secure: false,
-				port: 25,
+				port: smtpConfig.port,
 				tls: {
 					rejectUnauthorized: false,
 				},

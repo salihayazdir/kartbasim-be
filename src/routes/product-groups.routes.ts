@@ -7,6 +7,7 @@ import {
 	deleteProductGroupController,
 } from '../controllers/product-groups.controller';
 import validateResource from '../middlewares/validateResource';
+import requireUser from '../middlewares/requireUser';
 // import {
 // 	getProductGroupsSchema,
 // 	getProductGroupSchema,
@@ -23,10 +24,10 @@ const router = Router();
 // router.put('/:id', validateResource(editProductGroupSchema), editProductGroupController);
 // router.delete('/:id', validateResource(deleteProductGroupSchema), deleteProductGroupController);
 
-router.get('/', getProductGroupsController);
-router.get('/:id', getProductGroupController);
-router.post('/', addProductGroupController);
-router.put('/:id', editProductGroupController);
-router.delete('/:id', deleteProductGroupController);
+router.get('/', requireUser, getProductGroupsController);
+router.get('/:id', requireUser, getProductGroupController);
+router.post('/', requireUser, addProductGroupController);
+router.put('/:id', requireUser, editProductGroupController);
+router.delete('/:id', requireUser, deleteProductGroupController);
 
 export default router;

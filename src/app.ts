@@ -17,7 +17,7 @@ import consumablesRouter from './routes/consumables.routes';
 import usersRouter from './routes/users.routes';
 import authRouter from './routes/auth.routes';
 
-const port = config.get<number>('dev.port');
+const port = config.get<number>('port');
 const app = express();
 
 app.use(express.json());
@@ -46,5 +46,5 @@ app.use(errorHandler);
 
 app.listen(port, () => {
 	logger.info(`Listening on localhost:${port}`);
-	console.log(process.env.NODE_ENV?.trim());
+	console.log(`ENVIRONMENT = "${process.env.NODE_ENV}"`);
 });

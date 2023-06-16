@@ -14,13 +14,14 @@ import {
 	editPrinterSchema,
 	deletePrinterSchema,
 } from '../schemas/printers.schema';
+import requireUser from '../middlewares/requireUser';
 
 const router = Router();
 
-router.get('/', validateResource(getPrintersSchema), getPrintersController);
-router.get('/:id', validateResource(getPrinterSchema), getPrinterController);
-router.post('/', validateResource(addPrinterSchema), addPrinterController);
-router.put('/:id', validateResource(editPrinterSchema), editPrinterController);
-router.delete('/:id', validateResource(deletePrinterSchema), deletePrinterController);
+router.get('/', requireUser, validateResource(getPrintersSchema), getPrintersController);
+router.get('/:id', requireUser, validateResource(getPrinterSchema), getPrinterController);
+router.post('/', requireUser, validateResource(addPrinterSchema), addPrinterController);
+router.put('/:id', requireUser, validateResource(editPrinterSchema), editPrinterController);
+router.delete('/:id', requireUser, validateResource(deletePrinterSchema), deletePrinterController);
 
 export default router;

@@ -7,6 +7,7 @@ import {
 	deleteConsumableController,
 } from '../controllers/consumables.controller';
 import validateResource from '../middlewares/validateResource';
+import requireUser from '../middlewares/requireUser';
 // import {
 // 	getConsumablesSchema,
 // 	getConsumableSchema,
@@ -23,10 +24,10 @@ const router = Router();
 // router.put('/:id', validateResource(editConsumableSchema), editConsumableController);
 // router.delete('/:id', validateResource(deleteConsumableSchema), deleteConsumableController);
 
-router.get('/', getConsumablesController);
-router.get('/:id', getConsumableController);
-router.post('/', addConsumableController);
-router.put('/:id', editConsumableController);
-router.delete('/:id', deleteConsumableController);
+router.get('/', requireUser, getConsumablesController);
+router.get('/:id', requireUser, getConsumableController);
+router.post('/', requireUser, addConsumableController);
+router.put('/:id', requireUser, editConsumableController);
+router.delete('/:id', requireUser, deleteConsumableController);
 
 export default router;

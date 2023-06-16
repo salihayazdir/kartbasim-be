@@ -71,29 +71,29 @@ INSERT INTO [dbo].[CONSUMABLE_PRODUCT_RECORDS]
     (2,2),
     (3,3)
 
-INSERT INTO [dbo].[ICMAL_DELIVERY_TYPES] 
+INSERT INTO [dbo].[BATCH_DELIVERY_TYPES] 
     ([name] ) VALUES
     ('Posta'),
     ('Şube')
 
-INSERT INTO [dbo].[ICMAL_SOURCE_TYPES] 
+INSERT INTO [dbo].[BATCH_SOURCE_TYPES] 
     ([name] ) VALUES
     ('Web Servis'),
     ('Manuel'),
     ('Banka Portal')
 
-INSERT INTO [dbo].[BATCH] 
+INSERT INTO [dbo].[ICMAL] 
     ([bank_id], [description], [client_description], [created_at], [created_by] ) VALUES
     (1, '', '', GETDATE(), 'username4'),
     (1, '', '', GETDATE(), 'username4'),
     (2, '', '', GETDATE(), 'username4')
 
-INSERT INTO [dbo].[ICMAL] 
-    ([description], [client_description], [batch_id], [product_id], [icmal_delivery_type_id], [icmal_source_type_id], [quantity], [created_at], [created_by] ) VALUES
+INSERT INTO [dbo].[BATCH] 
+    ([description], [client_description], [icmal_id], [product_id], [batch_delivery_type_id], [batch_source_type_id], [quantity], [created_at], [created_by] ) VALUES
     ('', '', 1, 1, 1, 2, 50, GETDATE(), 'username4'),
     ('', '', 1, 1, 1, 1, 50, GETDATE(), 'username5')
 
-INSERT INTO [dbo].[ICMAL_STATUSES] 
+INSERT INTO [dbo].[BATCH_STATUSES] 
     ([name] ) VALUES
     ('Yeni'),
     ('Sırada'),
@@ -102,8 +102,8 @@ INSERT INTO [dbo].[ICMAL_STATUSES]
     ('Devir'),
     ('İptal')
 
-INSERT INTO [dbo].[ICMAL_STATUS_RECORDS] 
-    ([icmal_id], [icmal_status_id], [created_at] ) VALUES
+INSERT INTO [dbo].[BATCH_STATUS_RECORDS] 
+    ([batch_id], [batch_status_id], [created_at] ) VALUES
     (1,2, GETDATE() ),
     (1,3, GETDATE() ),
     (2,2, GETDATE() ),

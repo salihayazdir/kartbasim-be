@@ -56,6 +56,8 @@ export async function getPrinterController(req: Request<GetPrinterInput['params'
 
 export async function addPrinterController(req: Request<AddPrinterInput['body']>, res: Response) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name, model, serial_no, description } = req.body;
 		const printerToAdd: Omit<Printer, 'id' | 'is_deleted'> = {
 			name,
@@ -65,7 +67,7 @@ export async function addPrinterController(req: Request<AddPrinterInput['body']>
 			is_active: true,
 		};
 
-		const serviceResult = await addPrinterService(printerToAdd);
+		const serviceResult = await addPrinterService(printerToAdd, username);
 		const responseObject: ResponseObject<{ insertedId: number }> = {
 			error: false,
 			data: {
@@ -88,6 +90,8 @@ export async function editPrinterController(
 	res: Response
 ) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name, is_active, model, serial_no, description } = req.body;
 		const { id } = req.params;
 		const parsedId = parseInt(id);
@@ -102,7 +106,7 @@ export async function editPrinterController(
 			is_deleted: false,
 		};
 
-		const serviceResult = await editPrinterService(printerToEdit);
+		const serviceResult = await editPrinterService(printerToEdit, username);
 
 		const responseObject: ResponseObject<{ editedId: number }> = {
 			error: false,

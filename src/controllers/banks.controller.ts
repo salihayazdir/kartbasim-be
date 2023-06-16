@@ -52,8 +52,10 @@ export async function getBankController(req: Request<GetBankInput['params']>, re
 
 export async function addBankController(req: Request<AddBankInput['body']>, res: Response) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name } = req.body;
-		const serviceResult = await addBankService(name);
+		const serviceResult = await addBankService(name, username);
 		const responseObject: ResponseObject<{ insertedId: number }> = {
 			error: false,
 			data: {
@@ -76,6 +78,8 @@ export async function editBankController(
 	res: Response
 ) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name, is_active } = req.body;
 		const { id } = req.params;
 		const parsedId = parseInt(id);
@@ -87,7 +91,7 @@ export async function editBankController(
 			is_deleted: false,
 		};
 
-		const serviceResult = await editBankService(bankToEdit);
+		const serviceResult = await editBankService(bankToEdit, username);
 
 		const responseObject: ResponseObject<{ editedId: number }> = {
 			error: false,

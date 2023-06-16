@@ -4,10 +4,10 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"dev": "set NODE_ENV=dev && ts-node-dev --respawn --transpile-only src/app.ts | pino-pretty",
+		"dev": "set NODE_ENV=dev&& ts-node-dev --respawn --transpile-only src/app.ts | pino-pretty",
 		"build": "tsc",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "set NODE_ENV=prod && node build/app.js"
+		"start": "set NODE_ENV=prod&& node build/app.js"
 	},
 	"keywords": [],
 	"author": "",

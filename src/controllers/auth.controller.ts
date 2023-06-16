@@ -9,6 +9,13 @@ import {
 } from '../services/auth.service';
 import { get } from 'lodash';
 import { verifyJwt } from '../utils/jwt';
+import config from 'config';
+
+const { accessTokenValidTime, refreshTokenValidTime } = config.get<{
+	accessTokenValidTime: number;
+	refreshTokenValidTime: number;
+	otpValidTime: number;
+}>('auth.parameters');
 
 export async function loginController(req: Request, res: Response) {
 	try {
@@ -46,12 +53,12 @@ export async function createSessionController(req: Request, res: Response) {
 			.cookie('Authorization', `Bearer ${serviceResult.accessToken}`, {
 				secure: false,
 				// httpOnly: true,
-				maxAge: 1000 * 60 * 60 * 12,
+				maxAge: 1000 * 60 * accessTokenValidTime,
 			})
-			.cookie('x-refresh', `${serviceResult.refreshToken}`, {
+			.cookie('refresh', `${serviceResult.refreshToken}`, {
 				secure: false,
 				// httpOnly: true,
-				maxAge: 1000 * 60 * 60 * 24 * 365,
+				maxAge: 1000 * 60 * refreshTokenValidTime,
 			})
 			.send(responseObject);
 	} catch (err: any) {
@@ -66,7 +73,14 @@ export async function createSessionController(req: Request, res: Response) {
 
 export async function refreshSessionController(req: Request, res: Response) {
 	try {
-		const refreshToken = get(req, 'headers.x-refresh')?.toString() || '';
+		const refreshToken = res.locals.refreshToken;
+		if (!refreshToken) {
+			const errorDetails: ErrorDetails = {
+				code: 'TOKEN',
+				message: 'Refresh token bulunamadı.',
+			};
+			throw errorDetails;
+		}
 		const decodedRefreshToken = verifyJwt<{
 			sessionId: number;
 			iat: number;
@@ -91,7 +105,7 @@ export async function refreshSessionController(req: Request, res: Response) {
 			.cookie('Authorization', `Bearer ${serviceResult}`, {
 				secure: false,
 				// httpOnly: true,
-				maxAge: 1000 * 60 * 60 * 12,
+				maxAge: 1000 * 60 * accessTokenValidTime,
 			})
 			.send(responseObject);
 	} catch (err: any) {
@@ -100,13 +114,13 @@ export async function refreshSessionController(req: Request, res: Response) {
 			error: err,
 			data: null,
 		};
-		return res.status(401).send(responseObject);
+		return res.status(400).send(responseObject);
 	}
 }
 
 export async function logoutController(req: Request, res: Response) {
 	try {
-		const username = res.locals.user.username;
+		const { username } = res.locals.user;
 		if (username) logoutService(username);
 
 		const responseObject: ResponseObject<string> = {
@@ -114,13 +128,13 @@ export async function logoutController(req: Request, res: Response) {
 			data: 'Logout başarılı.',
 		};
 
-		return res.clearCookie('Authorization').clearCookie('x-refresh').send(responseObject);
+		return res.clearCookie('Authorization').clearCookie('refresh').send(responseObject);
 	} catch (err: any) {
 		logger.error(err);
 		const responseObject: ResponseObject<null> = {
 			error: err,
 			data: null,
 		};
-		return res.status(401).send(responseObject);
+		return res.status(400).send(responseObject);
 	}
 }

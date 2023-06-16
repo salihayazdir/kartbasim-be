@@ -4,7 +4,7 @@ import utcOffset from '../utils/utcOffset';
 import config from 'config';
 import sql, { IProcedureResult, ConnectionPool } from 'mssql';
 
-const dbConfig = config.get<string>('dev.db');
+const dbConfig = config.get<string>('db');
 
 export async function getProductTypesService() {
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
@@ -59,7 +59,8 @@ export async function getProductTypeService(id: number) {
 }
 
 export async function addProductTypeService(
-	productType: Omit<ProductType, 'id' | 'is_deleted'>
+	productType: Omit<ProductType, 'id' | 'is_deleted'>,
+	username: string
 ): Promise<number> {
 	const { name } = productType;
 
@@ -67,6 +68,7 @@ export async function addProductTypeService(
 	const result: IProcedureResult<ProductType> = await (await pool)
 		.request()
 		.input('name', sql.NVarChar, name)
+		.input('created_by', sql.NVarChar, username)
 		.execute('dbo.PRODUCT_TYPES_ADD_PRODUCT_TYPE');
 	logger.info(result);
 
@@ -82,7 +84,7 @@ export async function addProductTypeService(
 	return result.returnValue;
 }
 
-export async function editProductTypeService(productType: ProductType) {
+export async function editProductTypeService(productType: ProductType, username: string) {
 	const { id, name, is_active } = productType;
 
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
@@ -91,6 +93,7 @@ export async function editProductTypeService(productType: ProductType) {
 		.input('id', sql.Int, id)
 		.input('name', sql.NVarChar, name)
 		.input('is_active', sql.Bit, is_active)
+		.input('edited_by', sql.NVarChar, username)
 		.execute('dbo.PRODUCT_TYPES_EDIT_PRODUCT_TYPE');
 
 	logger.info(result);

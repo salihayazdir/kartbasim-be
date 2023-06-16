@@ -9,7 +9,12 @@ import dayjs from 'dayjs';
 import { signJwt } from '../utils/jwt';
 import utcOffset from '../utils/utcOffset';
 
-const dbConfig = config.get<string>('dev.db');
+const dbConfig = config.get<string>('db');
+const { accessTokenValidTime, refreshTokenValidTime, otpValidTime } = config.get<{
+	accessTokenValidTime: number;
+	refreshTokenValidTime: number;
+	otpValidTime: number;
+}>('auth.parameters');
 
 export async function loginService(username: string) {
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
@@ -105,8 +110,7 @@ export async function createSessionService(
 
 	const codeCreationDate = utcOffset(otpRecordset[0].created_at);
 	const now = dayjs();
-	const codeValidTime = 3; // Tek kullanımlık kodun geçerlilik süresi (dakika)
-	const validUntil = codeCreationDate.add(codeValidTime, 'minutes');
+	const validUntil = codeCreationDate.add(otpValidTime, 'minutes');
 	const isExpired = validUntil.isBefore(now);
 
 	if (isExpired) {
@@ -134,7 +138,9 @@ export async function createSessionService(
 
 	const user: User = getUserRecordset[0];
 
-	const accessToken = signJwt(user, 'accessTokenPrivateKey', { expiresIn: '12h' });
+	const accessToken = signJwt(user, 'accessTokenPrivateKey', {
+		expiresIn: `${accessTokenValidTime ?? 10}m`,
+	});
 
 	const addSessionResult: IProcedureResult<User> = await (await pool)
 		.request()
@@ -151,7 +157,9 @@ export async function createSessionService(
 		throw errorDetails;
 	}
 
-	const refreshToken = signJwt({ sessionId }, 'refreshTokenPrivateKey', { expiresIn: '1y' });
+	const refreshToken = signJwt({ sessionId }, 'refreshTokenPrivateKey', {
+		expiresIn: `${refreshTokenValidTime ?? 60 * 24 * 30}m`,
+	});
 
 	return { refreshToken, accessToken };
 }
@@ -201,7 +209,9 @@ export async function refreshSessionService(decodedRefreshToken: {
 
 	const user: User = getUserRecordset[0];
 
-	const accessToken = signJwt(user, 'accessTokenPrivateKey', { expiresIn: '12h' });
+	const accessToken = signJwt(user, 'accessTokenPrivateKey', {
+		expiresIn: `${accessTokenValidTime ?? 10}m`,
+	});
 
 	return accessToken;
 }

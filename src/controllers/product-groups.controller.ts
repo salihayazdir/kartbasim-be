@@ -50,6 +50,8 @@ export async function getProductGroupController(req: Request, res: Response) {
 
 export async function addProductGroupController(req: Request, res: Response) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name, bank_id, client_id, description } = req.body;
 		const productGroupToAdd: Omit<ProductGroup, 'id' | 'is_deleted'> = {
 			name,
@@ -59,7 +61,7 @@ export async function addProductGroupController(req: Request, res: Response) {
 			is_active: true,
 		};
 
-		const serviceResult = await addProductGroupService(productGroupToAdd);
+		const serviceResult = await addProductGroupService(productGroupToAdd, username);
 		const responseObject: ResponseObject<{ insertedId: number }> = {
 			error: false,
 			data: {
@@ -79,6 +81,8 @@ export async function addProductGroupController(req: Request, res: Response) {
 
 export async function editProductGroupController(req: Request, res: Response) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name, is_active, bank_id, client_id, description } = req.body;
 		const { id } = req.params;
 		const parsedId = parseInt(id);
@@ -93,7 +97,7 @@ export async function editProductGroupController(req: Request, res: Response) {
 			is_deleted: false,
 		};
 
-		const serviceResult = await editProductGroupService(productGroupToEdit);
+		const serviceResult = await editProductGroupService(productGroupToEdit, username);
 
 		const responseObject: ResponseObject<{ editedId: number }> = {
 			error: false,

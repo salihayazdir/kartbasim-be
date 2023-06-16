@@ -6,10 +6,8 @@ import toTitleCase from '../utils/toTitleCase';
 import { Client, SearchEntryObject, SearchOptions } from 'ldapjs';
 const ldap = require('ldapjs');
 
-const dbConfig = config.get<string>('dev.db');
-const ldapConfig = config.get<{ ip1: string; ip2: string; user: string; password: string }>(
-	'dev.ldap'
-);
+const dbConfig = config.get<string>('db');
+const ldapConfig = config.get<{ ip1: string; ip2: string; user: string; password: string }>('ldap');
 
 export async function updateUsersService(fn: (a: any) => any) {
 	try {
@@ -70,13 +68,16 @@ export async function updateUsersService(fn: (a: any) => any) {
 			});
 
 			res.on('end', (res) => {
-				client.unbind((err) => {
+				client.unbind(async (err) => {
 					if (err) throw `Unbind Error : ${err}`;
 					fn(ldapData);
+					const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
+					(await pool).request().execute('dbo.USERS_SET_ALL_INACTIVE');
 					ldapData.map(async (user) => {
 						try {
-							const userRoleId = 1;
-							const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
+							let userRoleId = 1;
+							const authorizedUsers = config.get<string[]>('auth.authorizedUsers');
+							if (authorizedUsers.indexOf(user.sAMAccountName as string) !== -1) userRoleId = 2;
 							const result: IProcedureResult<any> = await (
 								await pool
 							)
@@ -92,6 +93,7 @@ export async function updateUsersService(fn: (a: any) => any) {
 								.input('username', sql.NVarChar, user.sAMAccountName)
 								.input('mail', sql.NVarChar, user.mail)
 								.input('manager_dn', sql.NVarChar, user.manager)
+								.input('source', sql.NVarChar, 'bilesim_ad')
 								.execute('dbo.USERS_ADD_USER');
 							// logger.info(result);
 						} catch (err: any) {

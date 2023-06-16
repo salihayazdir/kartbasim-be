@@ -17,6 +17,7 @@ DROP PROCEDURE IF EXISTS [dbo].[SHIFTS_EDIT_SHIFT]
 DROP PROCEDURE IF EXISTS [dbo].[SHIFTS_DELETE_SHIFT]
 
 DROP PROCEDURE IF EXISTS [dbo].[USERS_ADD_USER]
+DROP PROCEDURE IF EXISTS [dbo].[USERS_SET_ALL_INACTIVE]
 DROP PROCEDURE IF EXISTS [dbo].[USERS_GET_USER]
 
 DROP PROCEDURE IF EXISTS [dbo].[AUTH_OTP_ADD_OTP]
@@ -187,6 +188,7 @@ CREATE OR ALTER PROCEDURE [dbo].[PRINTERS_GET_PRINTERS]
 			printers.[description],
 			printers.[model],
 			printers.[serial_no],
+			printers.[counter],
 			printers.[is_active],
 			printers.[is_deleted],
 			printers.[created_at],
@@ -303,47 +305,76 @@ CREATE OR ALTER PROCEDURE [dbo].[USERS_ADD_USER]
     @department  NVARCHAR (200),
     @username  NVARCHAR (50),
     @mail  NVARCHAR (200),
-    @manager_dn  NVARCHAR (200)
+    @manager_dn  NVARCHAR (200),
+	@source NVARCHAR(10)
 
 	AS
 	BEGIN
      SET NOCOUNT ON;
-		BEGIN
-			INSERT INTO [dbo].[USERS]
-			(
-				[sicil],
-				[name],
-				[user_role_id],
-				[dn],
-				[title],
-				[team],
-				[service],
-				[department],
-				[username],
-				[mail],
-				[manager_dn],
-				[created_at]
-			)
-			VALUES
-			(
-				@sicil,
-				@name,
-				@user_role_id,
-				@dn,
-				@title,
-				@team,
-				@service,
-				@department,
-				@username,
-				@mail,
-				@manager_dn,
-				GETDATE()
-			)
-			RETURN SCOPE_IDENTITY()
-		END
+	 	IF EXISTS (SELECT [username] FROM [dbo].[USERS] WHERE [username] = @username)
+			BEGIN
+				UPDATE [dbo].[USERS] SET
+					[sicil] = @sicil,
+					[name] = @name,
+					[dn] = @dn,
+					[title] = @title,
+					[team] = @team,
+					[service] = @service,
+					[department] = @department,
+					[mail] = @mail,
+					[manager_dn] = @manager_dn,
+					[is_active] = 1,
+					[edited_at] = GETDATE()
+				WHERE [username] = @username
+			END
+		ELSE	
+			BEGIN
+				INSERT INTO [dbo].[USERS]
+				(
+					[sicil],
+					[name],
+					[user_role_id],
+					[dn],
+					[title],
+					[team],
+					[service],
+					[department],
+					[username],
+					[mail],
+					[manager_dn],
+					[source],
+					[created_at]
+				)
+				VALUES
+				(
+					@sicil,
+					@name,
+					@user_role_id,
+					@dn,
+					@title,
+					@team,
+					@service,
+					@department,
+					@username,
+					@mail,
+					@manager_dn,
+					@source,
+					GETDATE()
+				)
+				RETURN SCOPE_IDENTITY()
+			END
 	END;
 GO
 
+CREATE OR ALTER PROCEDURE [dbo].[USERS_SET_ALL_INACTIVE]
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		UPDATE [dbo].[USERS]
+		SET [is_active] = 0
+		WHERE [source] = 'bilesim_ad'
+	END;
+GO
 
 CREATE OR ALTER PROCEDURE [dbo].[USERS_GET_USER]
 	@username NVARCHAR (50)

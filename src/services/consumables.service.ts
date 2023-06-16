@@ -4,7 +4,7 @@ import utcOffset from '../utils/utcOffset';
 import config from 'config';
 import sql, { IProcedureResult, ConnectionPool } from 'mssql';
 
-const dbConfig = config.get<string>('dev.db');
+const dbConfig = config.get<string>('db');
 
 export async function getConsumablesService() {
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
@@ -59,15 +59,17 @@ export async function getConsumableService(id: number) {
 }
 
 export async function addConsumableService(
-	Consumable: Omit<Consumable, 'id' | 'stock_quantity' | 'is_deleted'>
+	consumable: Omit<Consumable, 'id' | 'stock_quantity' | 'is_deleted'>,
+	username: string
 ): Promise<number> {
-	const { name, consumable_type_id } = Consumable;
+	const { name, consumable_type_id } = consumable;
 
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
 	const result: IProcedureResult<Consumable> = await (await pool)
 		.request()
 		.input('name', sql.NVarChar, name)
 		.input('consumable_type_id', sql.Int, consumable_type_id)
+		.input('created_by', sql.NVarChar, username)
 		.execute('dbo.CONSUMABLES_ADD_CONSUMABLE');
 	logger.info(result);
 
@@ -83,8 +85,11 @@ export async function addConsumableService(
 	return result.returnValue;
 }
 
-export async function editConsumableService(Consumable: Omit<Consumable, 'stock_quantity'>) {
-	const { id, name, consumable_type_id, is_active } = Consumable;
+export async function editConsumableService(
+	consumable: Omit<Consumable, 'stock_quantity'>,
+	username: string
+) {
+	const { id, name, consumable_type_id, is_active } = consumable;
 
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
 	const result: IProcedureResult<Consumable> = await (await pool)
@@ -93,6 +98,7 @@ export async function editConsumableService(Consumable: Omit<Consumable, 'stock_
 		.input('name', sql.NVarChar, name)
 		.input('is_active', sql.Bit, is_active)
 		.input('consumable_type_id', sql.Int, consumable_type_id)
+		.input('edited_by', sql.NVarChar, username)
 		.execute('dbo.CONSUMABLES_EDIT_CONSUMABLE');
 	logger.info(result);
 

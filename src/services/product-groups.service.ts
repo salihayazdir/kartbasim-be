@@ -4,7 +4,7 @@ import utcOffset from '../utils/utcOffset';
 import config from 'config';
 import sql, { IProcedureResult, ConnectionPool } from 'mssql';
 
-const dbConfig = config.get<string>('dev.db');
+const dbConfig = config.get<string>('db');
 
 export async function getProductGroupsService() {
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
@@ -58,7 +58,8 @@ export async function getProductGroupService(id: number) {
 }
 
 export async function addProductGroupService(
-	productGroup: Omit<ProductGroup, 'id' | 'is_deleted'>
+	productGroup: Omit<ProductGroup, 'id' | 'is_deleted'>,
+	username: string
 ): Promise<number> {
 	const { name, bank_id, client_id, description } = productGroup;
 
@@ -69,6 +70,7 @@ export async function addProductGroupService(
 		.input('bank_id', sql.Int, bank_id)
 		.input('client_id', sql.NVarChar, client_id)
 		.input('description', sql.NVarChar, description)
+		.input('created_by', sql.NVarChar, username)
 		.execute('dbo.PRODUCT_GROUPS_ADD_PRODUCT_GROUP');
 	logger.info(result);
 
@@ -85,7 +87,7 @@ export async function addProductGroupService(
 	return result.returnValue;
 }
 
-export async function editProductGroupService(productGroup: ProductGroup) {
+export async function editProductGroupService(productGroup: ProductGroup, username: string) {
 	const { id, name, bank_id, client_id, description, is_active } = productGroup;
 
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
@@ -97,6 +99,7 @@ export async function editProductGroupService(productGroup: ProductGroup) {
 		.input('client_id', sql.NVarChar, client_id)
 		.input('description', sql.NVarChar, description)
 		.input('is_active', sql.Bit, is_active)
+		.input('edited_by', sql.NVarChar, username)
 		.execute('dbo.PRODUCT_GROUPS_EDIT_PRODUCT_GROUP');
 
 	logger.info(result);

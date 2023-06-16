@@ -50,6 +50,8 @@ export async function getConsumableController(req: Request, res: Response) {
 
 export async function addConsumableController(req: Request, res: Response) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name, consumable_type_id } = req.body;
 		const consumableToAdd: Omit<Consumable, 'id' | 'stock_quantity' | 'is_deleted'> = {
 			name,
@@ -57,7 +59,7 @@ export async function addConsumableController(req: Request, res: Response) {
 			is_active: true,
 		};
 
-		const serviceResult = await addConsumableService(consumableToAdd);
+		const serviceResult = await addConsumableService(consumableToAdd, username);
 		const responseObject: ResponseObject<{ insertedId: number }> = {
 			error: false,
 			data: {
@@ -77,6 +79,8 @@ export async function addConsumableController(req: Request, res: Response) {
 
 export async function editConsumableController(req: Request, res: Response) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name, consumable_type_id, is_active } = req.body;
 		const { id } = req.params;
 		const parsedId = parseInt(id);
@@ -89,7 +93,7 @@ export async function editConsumableController(req: Request, res: Response) {
 			is_deleted: false,
 		};
 
-		const serviceResult = await editConsumableService(consumableToEdit);
+		const serviceResult = await editConsumableService(consumableToEdit, username);
 
 		const responseObject: ResponseObject<{ editedId: number }> = {
 			error: false,

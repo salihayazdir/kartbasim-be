@@ -50,13 +50,15 @@ export async function getConsumableTypeController(req: Request, res: Response) {
 
 export async function addConsumableTypeController(req: Request, res: Response) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name } = req.body;
 		const consumableTypeToAdd: Omit<ConsumableType, 'id' | 'is_deleted'> = {
 			name,
 			is_active: true,
 		};
 
-		const serviceResult = await addConsumableTypeService(consumableTypeToAdd);
+		const serviceResult = await addConsumableTypeService(consumableTypeToAdd, username);
 		const responseObject: ResponseObject<{ insertedId: number }> = {
 			error: false,
 			data: {
@@ -76,6 +78,8 @@ export async function addConsumableTypeController(req: Request, res: Response) {
 
 export async function editConsumableTypeController(req: Request, res: Response) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name, is_active } = req.body;
 		const { id } = req.params;
 		const parsedId = parseInt(id);
@@ -87,7 +91,7 @@ export async function editConsumableTypeController(req: Request, res: Response) 
 			is_deleted: false,
 		};
 
-		const serviceResult = await editConsumableTypeService(consumableTypeToEdit);
+		const serviceResult = await editConsumableTypeService(consumableTypeToEdit, username);
 
 		const responseObject: ResponseObject<{ editedId: number }> = {
 			error: false,

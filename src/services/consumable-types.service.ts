@@ -4,7 +4,7 @@ import utcOffset from '../utils/utcOffset';
 import config from 'config';
 import sql, { IProcedureResult, ConnectionPool } from 'mssql';
 
-const dbConfig = config.get<string>('dev.db');
+const dbConfig = config.get<string>('db');
 
 export async function getConsumableTypesService() {
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
@@ -59,7 +59,8 @@ export async function getConsumableTypeService(id: number) {
 }
 
 export async function addConsumableTypeService(
-	ConsumableType: Omit<ConsumableType, 'id' | 'is_deleted'>
+	ConsumableType: Omit<ConsumableType, 'id' | 'is_deleted'>,
+	username: string
 ): Promise<number> {
 	const { name } = ConsumableType;
 
@@ -67,6 +68,7 @@ export async function addConsumableTypeService(
 	const result: IProcedureResult<ConsumableType> = await (await pool)
 		.request()
 		.input('name', sql.NVarChar, name)
+		.input('created_by', sql.NVarChar, username)
 		.execute('dbo.CONSUMABLE_TYPES_ADD_CONSUMABLE_TYPE');
 	logger.info(result);
 
@@ -82,7 +84,7 @@ export async function addConsumableTypeService(
 	return result.returnValue;
 }
 
-export async function editConsumableTypeService(ConsumableType: ConsumableType) {
+export async function editConsumableTypeService(ConsumableType: ConsumableType, username: string) {
 	const { id, name, is_active } = ConsumableType;
 
 	const pool: Promise<ConnectionPool> = sql.connect(dbConfig);
@@ -91,6 +93,7 @@ export async function editConsumableTypeService(ConsumableType: ConsumableType) 
 		.input('id', sql.Int, id)
 		.input('name', sql.NVarChar, name)
 		.input('is_active', sql.Bit, is_active)
+		.input('edited_by', sql.NVarChar, username)
 		.execute('dbo.CONSUMABLE_TYPES_EDIT_CONSUMABLE_TYPE');
 
 	logger.info(result);

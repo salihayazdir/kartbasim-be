@@ -50,6 +50,8 @@ export async function getProductController(req: Request, res: Response) {
 
 export async function addProductController(req: Request, res: Response) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name, product_group_id, product_type_id, client_id, description } = req.body;
 		const productToAdd: Omit<Product, 'id' | 'is_deleted'> = {
 			name,
@@ -60,7 +62,7 @@ export async function addProductController(req: Request, res: Response) {
 			is_active: true,
 		};
 
-		const serviceResult = await addProductService(productToAdd);
+		const serviceResult = await addProductService(productToAdd, username);
 		const responseObject: ResponseObject<{ insertedId: number }> = {
 			error: false,
 			data: {
@@ -80,6 +82,8 @@ export async function addProductController(req: Request, res: Response) {
 
 export async function editProductController(req: Request, res: Response) {
 	try {
+		const { username } = res.locals.user;
+
 		const { name, product_group_id, product_type_id, client_id, description, is_active } = req.body;
 		const { id } = req.params;
 		const parsedId = parseInt(id);
@@ -95,7 +99,7 @@ export async function editProductController(req: Request, res: Response) {
 			is_deleted: false,
 		};
 
-		const serviceResult = await editProductService(productToEdit);
+		const serviceResult = await editProductService(productToEdit, username);
 
 		const responseObject: ResponseObject<{ editedId: number }> = {
 			error: false,
