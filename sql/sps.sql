@@ -57,6 +57,10 @@ DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLES_ADD_CONSUMABLE]
 DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLES_EDIT_CONSUMABLE]
 DROP PROCEDURE IF EXISTS [dbo].[CONSUMABLES_DELETE_CONSUMABLE]
 
+DROP PROCEDURE IF EXISTS [dbo].[PRODUCT_INVENTORY_RECORDS_GET_PRODUCT_INVENTORY_RECORDS]
+
+
+
 GO
 CREATE OR ALTER PROCEDURE [dbo].[BANKS_GET_BANK]
 	@id INT
@@ -756,6 +760,7 @@ CREATE OR ALTER PROCEDURE [dbo].[PRODUCTS_GET_PRODUCTS]
     		products.[name],
     		products.[product_group_id],
     		productGroups.[name] product_group_name,
+    		banks.[name] bank_name,
     		products.[product_type_id],
     		productTypes.[name] product_type_name,
 			products.[client_id],
@@ -773,6 +778,8 @@ CREATE OR ALTER PROCEDURE [dbo].[PRODUCTS_GET_PRODUCTS]
 		FROM [dbo].[PRODUCTS] products
 		LEFT JOIN [dbo].[PRODUCT_GROUPS] productGroups
 			ON products.[product_group_id] = productGroups.[id]
+		LEFT JOIN [dbo].[BANKS] banks
+			ON productGroups.[bank_id] = banks.[id]
 		LEFT JOIN [dbo].[PRODUCT_TYPES] productTypes
 			ON products.[product_type_id] = productTypes.[id]
 		LEFT JOIN [dbo].[USERS] users1
@@ -1114,5 +1121,41 @@ CREATE OR ALTER PROCEDURE [dbo].[CONSUMABLES_DELETE_CONSUMABLE]
 		BEGIN
 			RETURN -1
 		END
+	END;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[PRODUCT_INVENTORY_RECORDS_GET_PRODUCT_INVENTORY_RECORDS]
+	AS
+	BEGIN 
+     SET NOCOUNT ON;
+		SELECT
+			records.[id],
+			records.[product_id],
+				products.[name] product_name,
+				product_groups.[name] product_group_name,
+				product_types.[name] product_type_name,
+				banks.[name] bank_name,
+			records.[product_inventory_record_type_id],
+				record_types.[name] product_inventory_record_type_name,
+			records.[quantity],
+			records.[batch_id],
+			records.[is_main_safe],
+			records.[created_at],
+			users.[name] created_by_name
+		FROM [dbo].[PRODUCT_INVENTORY_RECORDS] records
+		LEFT JOIN [dbo].[USERS] users
+			ON records.[created_by] = users.[username]
+		LEFT JOIN [dbo].[PRODUCTS] products
+			ON records.[product_id] = products.[id]
+		LEFT JOIN [dbo].[PRODUCT_GROUPS] product_groups
+			ON products.[product_group_id] = product_groups.[id]
+		LEFT JOIN [dbo].[BANKS] banks
+			ON product_groups.[bank_id] = banks.[id]
+		LEFT JOIN [dbo].[PRODUCT_TYPES] product_types
+			ON products.[product_type_id] = product_types.[id]
+		LEFT JOIN [dbo].[PRODUCT_INVENTORY_RECORD_TYPES] record_types
+			ON records.[product_inventory_record_type_id] = record_types.[id]
+		LEFT JOIN [dbo].[BATCH] batch
+			ON records.[batch_id] = batch.[id]
 	END;
 GO

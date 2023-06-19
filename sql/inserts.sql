@@ -44,15 +44,22 @@ INSERT INTO [dbo].[PRODUCTS]
     ( 'VC PARAF KOBİ DUAL', 4, 2, 'DUAL-1', '', 75, 10, GETDATE(), 'username4'),
     ( 'VC PARAF TOBB DUAL', 4, 2, 'DUAL-TOBB', '', 75, 10, GETDATE(), 'username4')
 
-INSERT INTO [dbo].[PRODUCT_STOCK_RECORD_TYPES] 
+INSERT INTO [dbo].[PRODUCT_INVENTORY_RECORD_TYPES] 
     ([name] ) VALUES
     ('Stok Girişi'),
-    ('Kart Basım'),
-    ('Iskarta')
+    ('Transfer'),
+    ('Kart Basım')
 
-INSERT INTO [dbo].[PRODUCT_STOCK_RECORDS] 
-    ([product_id], [product_stock_record_type_id], [is_main_safe], [created_at], [created_by] ) VALUES
-    (3, 1, 1, GETDATE(), 'username1')
+INSERT INTO [dbo].[PRODUCT_INVENTORY_RECORDS] 
+    ([product_id], [product_inventory_record_type_id], [quantity], [is_main_safe], [created_at], [created_by] ) VALUES
+    (1, 1, 20, 1, GETDATE(), 'username1'),
+    (1, 1, 50, 1, GETDATE(), 'username2'),
+    (4, 2, -10, 1, GETDATE(), 'username3'),
+    (4, 2, 10, 0, GETDATE(), 'username3'),
+    (5, 1, 200, 1, GETDATE(), 'username1'),
+    (2, 1, -25, 1, GETDATE(), 'username2'),
+    (2, 1, 2, 1, GETDATE(), 'username1'),
+    (1, 1, 150, 1, GETDATE(), 'username4')
 
 INSERT INTO [dbo].[CONSUMABLE_TYPES] 
     ([name], [created_at], [created_by] ) VALUES

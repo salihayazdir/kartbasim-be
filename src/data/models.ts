@@ -65,7 +65,7 @@ export type ProductGroup = {
 	is_active: boolean;
 	is_deleted: boolean;
 	bank_id: number;
-	client_id?: string; // Zorunlu olmayan alan
+	client_id?: string;
 	description: string;
 	created_at?: string;
 	created_by?: string;
@@ -80,10 +80,10 @@ export type Product = {
 	is_deleted: boolean;
 	product_type_id: number;
 	product_group_id: number;
-	client_id?: string; // Zorunlu olmayan alan
+	client_id?: string;
 	description: string;
-	main_safe_quantity?: number; // 	Edit'te zorunlu değil, Zorunlu değil - Add'de 0
-	daily_safe_quantity?: number; // Edit'te zorunlu değil, Zorunlu değil - Add'de 0
+	main_safe_quantity?: number;
+	daily_safe_quantity?: number;
 	created_at?: string;
 	created_by?: string;
 	edited_at?: string;
@@ -131,4 +131,20 @@ export type User = {
 	is_active: boolean;
 	manager_name: string;
 	manager_username: string;
+};
+
+export type ProductInventoryRecords = {
+	id: number;
+	product_id: number;
+	product_name: string;
+	product_group_name: string;
+	product_type_name: string;
+	bank_name: string;
+	product_inventory_record_type_id: number;
+	product_inventory_record_type_name: string;
+	batch_id?: number;
+	quantity: number;
+	is_main_safe: boolean;
+	created_at: string;
+	created_by_name?: string;
 };

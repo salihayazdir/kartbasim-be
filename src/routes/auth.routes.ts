@@ -10,8 +10,8 @@ import deserializeRefreshToken from '../middlewares/deserializeRefreshToken';
 const router = Router();
 
 router.post('/login', loginController);
-router.post('/logout', logoutController);
 router.post('/session', createSessionController);
 router.get('/refresh', deserializeRefreshToken, refreshSessionController);
+router.get('/logout', logoutController);
 
 export default router;
